@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HSK Flashcards 1-5</title>
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=DM+Mono:wght@300;400&family=Fraunces:opsz,wght@9..144,300;9..144,400&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#1a1714;--paper:#f5f0e8;--paper2:#ede7d9;--paper3:#e2dace;
@@ -13,27 +15,27 @@
   --radius:6px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;background:var(--paper);color:var(--ink);min-height:100vh}
+body{font-family:'DM Mono',monospace;background:var(--paper);color:var(--ink);min-height:100vh}
 .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
 
 /* SIDEBAR */
 .sidebar{background:var(--paper2);border-right:1px solid var(--border2);padding:1.25rem 1rem;display:flex;flex-direction:column;gap:0.75rem;overflow-y:auto;position:sticky;top:0;height:100vh}
-.logo{font-family:Georgia,'Times New Roman',serif;font-size:1.3rem;font-weight:300;padding-bottom:0.6rem;border-bottom:1px solid var(--border)}
+.logo{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:300;padding-bottom:0.6rem;border-bottom:1px solid var(--border)}
 .logo span{color:var(--accent)}
-.logo small{display:block;font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:10px;color:var(--muted);font-weight:300;margin-top:2px}
+.logo small{display:block;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);font-weight:300;margin-top:2px}
 .fl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
 .chips{display:flex;flex-wrap:wrap;gap:3px}
-.chip{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:11px;padding:3px 8px;border:1px solid var(--border2);border-radius:20px;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s}
+.chip{font-family:'DM Mono',monospace;font-size:11px;padding:3px 8px;border:1px solid var(--border2);border-radius:20px;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s}
 .chip:hover{border-color:var(--ink);color:var(--ink)}
 .chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-select{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:11px;padding:5px 8px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--paper);color:var(--ink);width:100%}
+select{font-family:'DM Mono',monospace;font-size:11px;padding:5px 8px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--paper);color:var(--ink);width:100%}
 .lrow{display:flex;align-items:center;gap:6px;margin-top:4px}
 .ll{font-size:10px;color:var(--muted);white-space:nowrap}
-input[type=number]{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:11px;width:44px;padding:4px 6px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--paper);color:var(--ink);text-align:center}
+input[type=number]{font-family:'DM Mono',monospace;font-size:11px;width:44px;padding:4px 6px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--paper);color:var(--ink);text-align:center}
 input[type=range]{flex:1;cursor:pointer}
 hr{border:none;border-top:1px solid var(--border);margin:.1rem 0}
 .pill{font-size:10px;color:var(--muted);background:var(--paper3);border-radius:20px;padding:3px 10px;display:inline-block}
-.sbtn{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:11px;padding:5px 10px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--ink);cursor:pointer;transition:all .15s;width:100%}
+.sbtn{font-family:'DM Mono',monospace;font-size:11px;padding:5px 10px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--ink);cursor:pointer;transition:all .15s;width:100%}
 .sbtn:hover{background:var(--paper3)}
 
 /* MAIN */
@@ -54,20 +56,20 @@ hr{border:none;border-top:1px solid var(--border);margin:.1rem 0}
 
 /* FRONT face */
 .front-body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;padding:1.5rem 0 2rem}
-.ch{font-family:'PingFang SC','Noto Sans CJK SC','Microsoft YaHei',serif;font-size:88px;font-weight:300;line-height:1;color:var(--ink);letter-spacing:-3px}
+.ch{font-family:'Noto Serif TC',serif;font-size:88px;font-weight:300;line-height:1;color:var(--ink);letter-spacing:-3px}
 .py{font-size:21px;color:var(--muted);letter-spacing:.02em}
 .zy{font-size:14px;color:var(--muted);opacity:.65;letter-spacing:3px}
 .flip-hint{position:absolute;bottom:12px;right:16px;font-size:10px;color:var(--muted);opacity:.5}
 
 /* BACK face */
 .back-top{text-align:center;padding-bottom:.8rem;border-bottom:1px solid var(--border);margin-bottom:.8rem}
-.meaning{font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:300;color:var(--ink);margin-bottom:4px}
+.meaning{font-family:'Fraunces',serif;font-size:24px;font-weight:300;color:var(--ink);margin-bottom:4px}
 .back-py{font-size:14px;color:var(--muted)}
 .back-zy{font-size:12px;color:var(--muted);opacity:.65;margin-top:2px;letter-spacing:2px}
 .chars-lbl{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
 .chars-grid{display:flex;flex-wrap:wrap;gap:8px}
 .ctile{background:var(--paper2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;text-align:center;flex:1;min-width:72px;max-width:130px}
-.ctile .cc{font-family:'PingFang SC','Noto Sans CJK SC','Microsoft YaHei',serif;font-size:28px;font-weight:300;display:block;margin-bottom:2px}
+.ctile .cc{font-family:'Noto Serif TC',serif;font-size:28px;font-weight:300;display:block;margin-bottom:2px}
 .ctile .cp{font-size:11px;color:var(--muted)}
 .ctile .cz{font-size:10px;color:var(--muted);opacity:.65;letter-spacing:1px}
 .ctile .cm{font-size:11px;color:var(--ink);margin-top:3px}
@@ -75,11 +77,11 @@ hr{border:none;border-top:1px solid var(--border);margin:.1rem 0}
 
 /* NAV */
 .navrow{width:100%;max-width:580px;display:flex;align-items:center;gap:8px}
-.nbtn{flex:1;font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:12px;padding:10px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--ink);cursor:pointer;transition:all .15s}
+.nbtn{flex:1;font-family:'DM Mono',monospace;font-size:12px;padding:10px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--ink);cursor:pointer;transition:all .15s}
 .nbtn:hover{background:var(--paper2)}
 .nbtn:disabled{opacity:.3;cursor:not-allowed}
 .prog{font-size:12px;color:var(--muted);min-width:60px;text-align:center}
-.shuf{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:11px;padding:10px 14px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s}
+.shuf{font-family:'DM Mono',monospace;font-size:11px;padding:10px 14px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s}
 .shuf:hover{background:var(--paper2);color:var(--ink)}
 
 /* LOOP DOTS */
@@ -93,12 +95,12 @@ hr{border:none;border-top:1px solid var(--border);margin:.1rem 0}
 .apbar{width:100%;max-width:580px;display:flex;align-items:center;gap:8px;background:var(--paper2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px}
 .aplbl{font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;flex:1}
 .apst{font-size:11px;color:var(--accent)}
-.apbtn{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:11px;padding:4px 10px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--ink);cursor:pointer;transition:all .15s}
+.apbtn{font-family:'DM Mono',monospace;font-size:11px;padding:4px 10px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--ink);cursor:pointer;transition:all .15s}
 .apbtn:hover{background:var(--paper3)}
 .apbtn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .kbhint{font-size:9px;color:var(--muted);text-align:center;opacity:.6;letter-spacing:.04em}
 .nocard{text-align:center;padding:4rem 2rem;color:var(--muted)}
-.nocard h3{font-family:Georgia,'Times New Roman',serif;font-weight:300;font-size:1.4rem;margin-bottom:.5rem;color:var(--ink)}
+.nocard h3{font-family:'Fraunces',serif;font-weight:300;font-size:1.4rem;margin-bottom:.5rem;color:var(--ink)}
 
 @media(max-width:700px){
   .app{grid-template-columns:1fr}
@@ -107,33 +109,8 @@ hr{border:none;border-top:1px solid var(--border);margin:.1rem 0}
   .card{min-height:280px}
 }
 </style>
-
-
-<!-- iOS/iPadOS home screen meta tags -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="HSK Flash">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#1a1714">
-
-<!-- iOS home screen icon (inline SVG → data URI) -->
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%231a1714'/%3E%3Ctext x='256' y='360' font-size='320' text-anchor='middle' fill='%23f5f0e8' font-family='serif'%3E漢%3C/text%3E%3C/svg%3E">
 </head>
 <body>
-<!-- iOS install + audio unlock banner -->
-<div id="iosBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;font-family:monospace;font-size:12px;">
-  <!-- Audio unlock strip (shown first) -->
-  <div id="audioUnlockStrip" style="background:#1a1714;color:#f5f0e8;padding:10px 16px;text-align:center;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1)" onclick="unlockAudio()">
-    🔊 Tap anywhere to unlock audio — required on iPad/iOS
-  </div>
-  <!-- Install tip strip -->
-  <div id="installStrip" style="background:#2d6a4f;color:#f5f0e8;padding:8px 16px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px">
-    <span>💡 Install as app: tap</span>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-    <span>then <b>"Add to Home Screen"</b></span>
-    <button onclick="document.getElementById('installStrip').style.display='none'" style="background:transparent;border:1px solid rgba(255,255,255,0.4);color:white;padding:2px 8px;border-radius:3px;font-family:monospace;font-size:11px;cursor:pointer;margin-left:8px">✕</button>
-  </div>
-</div>
 <div class="app">
   <aside class="sidebar">
     <div class="logo">漢字 <span>Flash</span><small>HSK Old Standard 1–5</small></div>
@@ -858,8 +835,6 @@ function render(){
   });
   document.getElementById('abtn').addEventListener('click',e=>{
     e.stopPropagation();
-    // iOS requires speech inside user gesture handler — this click IS a gesture
-    if(speechSynthesis.paused){try{speechSynthesis.resume();}catch(e){}}
     speak(w.w);
   });
 
@@ -886,263 +861,181 @@ function shuffleDeck(){
 }
 
 // ── Speech ───────────────────────────────────────────────────────────────────
+function loadVoices(){
+  const all=speechSynthesis.getVoices();
+  if(!all.length)return; // not ready yet — onvoiceschanged will retry
 
-// ═══════════════════════════════════════════════════════════
-// VOICE LOADING — robust for iOS/iPad/Edge
-// ═══════════════════════════════════════════════════════════
-let _voiceRetries = 0;
-
-function loadVoices() {
-  const all = speechSynthesis.getVoices();
-  if (!all.length) return; // not ready yet
-
-  const PREF = ['ting-ting','meijia','sin-ji','ya-ling','li-mu','hanhan','minglong'];
-  let candidates = all.filter(v => {
-    const l = v.lang.toLowerCase(), n = v.name.toLowerCase();
-    if (l.startsWith('zh')) return true;
-    if (PREF.some(x => n.includes(x))) return true;
+  // Show ALL zh-* voices in the selector — no filtering out,
+  // because "zh-HK" can be Mandarin on macOS (e.g. Sin-Ji),
+  // and on some systems the language tag is wrong entirely.
+  // We show everything starting with 'zh' PLUS any voice whose
+  // name contains a known Mandarin keyword.
+  const MAND_NAMES=['ting-ting','meijia','sin-ji','ya-ling','li-mu','hanhan',
+                    'minglong','lekha','mandarin','putonghua','普通话','国语',
+                    'chinese','zh-'];
+  let candidates=all.filter(v=>{
+    const l=v.lang.toLowerCase();
+    const n=v.name.toLowerCase();
+    if(l.startsWith('zh'))return true;
+    if(MAND_NAMES.some(x=>n.includes(x)))return true;
     return false;
   });
-  function score(v) {
-    const n = v.name.toLowerCase(), l = v.lang.toLowerCase(); let s = 0;
-    if (PREF.some(x => n.includes(x))) s += 20;
-    if (l === 'zh-tw' || l === 'zh-cn') s += 5;
-    if (l === 'zh-hk') s += 2;
-    if (n.includes('cantonese') || n.includes('yue')) s -= 10;
+
+  // Sort: known human Mandarin voices first
+  const PREF=['ting-ting','meijia','sin-ji','ya-ling','li-mu','hanhan','minglong'];
+  function score(v){
+    const n=v.name.toLowerCase(),l=v.lang.toLowerCase();
+    let s=0;
+    if(PREF.some(x=>n.includes(x)))s+=20;
+    // Prefer zh-TW and zh-CN over zh-HK for Mandarin
+    if(l==='zh-tw'||l==='zh-cn')s+=5;
+    if(l==='zh-hk')s+=2;
+    // Cantonese names go to the bottom (user can still pick them)
+    if(n.includes('cantonese')||n.includes('yue'))s-=10;
     return s;
   }
-  candidates.sort((a,b) => score(b) - score(a));
-  voices = candidates.length ? candidates : all;
+  candidates.sort((a,b)=>score(b)-score(a));
 
-  const sel = document.getElementById('voiceSelect');
-  const prevVal = sel.value;
-  sel.innerHTML = '';
-  if (!voices.length) {
-    sel.innerHTML = '<option>No voices found — check OS TTS settings</option>';
+  // If still nothing, fall back to ALL voices (desperate measure)
+  voices=candidates.length?candidates:all;
+
+  const sel=document.getElementById('voiceSelect');
+  const prevVal=sel.value; // preserve selection across reloads
+  sel.innerHTML='';
+  if(!voices.length){
+    sel.innerHTML='<option>No voices available — check browser TTS settings</option>';
     return;
   }
-  voices.forEach((v,i) => {
-    const o = document.createElement('option');
-    o.value = i;
-    o.textContent = v.name.slice(0,36) + ' [' + v.lang + ']';
+  voices.forEach((v,i)=>{
+    const o=document.createElement('option');
+    o.value=i;
+    // Show lang tag so user can identify Cantonese vs Mandarin
+    o.textContent=v.name.slice(0,36)+' ['+v.lang+']';
     sel.appendChild(o);
   });
-  if (prevVal && sel.querySelector('option[value="'+prevVal+'"]')) sel.value = prevVal;
-  selVoice = voices[+sel.value] || voices[0];
-  sel.onchange = () => { selVoice = voices[+sel.value]; };
-  const dbg = document.getElementById('voiceDebug');
-  if (dbg && dbg.style.display !== 'none') renderVoiceDebug(all);
+  // Restore previous selection if possible
+  if(prevVal&&sel.querySelector('option[value="'+prevVal+'"]'))sel.value=prevVal;
+  selVoice=voices[+sel.value]||voices[0];
+  sel.onchange=()=>{selVoice=voices[+sel.value];};
+
+  // Update debug info if panel is open
+  const dbg=document.getElementById('voiceDebug');
+  if(dbg)renderVoiceDebug(all);
 }
 
-function renderVoiceDebug(allVoices) {
-  const dbg = document.getElementById('voiceDebug');
-  if (!dbg || dbg.style.display === 'none') return;
-  const list = allVoices || speechSynthesis.getVoices();
-  let h = '<div style="font-size:9px;line-height:1.8;color:var(--muted)">';
-  h += '<b style="color:var(--ink)">All ' + list.length + ' voices your browser has:</b><br>';
-  list.forEach((v,i) => {
-    const zh = v.lang.toLowerCase().startsWith('zh');
-    h += '<span style="color:' + (zh ? 'var(--accent2)' : 'var(--muted)') + '">' +
-         i + '. ' + v.name + ' [' + v.lang + ']' + (v.default ? ' ★' : '') + '</span><br>';
+function renderVoiceDebug(allVoices){
+  const dbg=document.getElementById('voiceDebug');
+  if(!dbg||dbg.style.display==='none')return;
+  const list=allVoices||speechSynthesis.getVoices();
+  let h='<div style="font-size:9px;line-height:1.8;color:var(--muted)">';
+  h+='<b style="color:var(--ink)">All '+list.length+' voices your browser has:</b><br>';
+  list.forEach((v,i)=>{
+    const zh=v.lang.toLowerCase().startsWith('zh');
+    h+='<span style="color:'+(zh?'var(--accent2)':'var(--muted)')+'">'+
+       i+'. '+v.name+' ['+v.lang+']'+(v.default?' ★':'')+'</span><br>';
   });
-  h += '</div>';
-  dbg.innerHTML = h;
+  h+='</div>';
+  dbg.innerHTML=h;
 }
 
-function retryLoadVoices() {
+// Retry loading on a schedule — browsers differ on when voices are ready
+let _voiceRetries=0;
+function retryLoadVoices(){
   loadVoices();
   _voiceRetries++;
-  if (voices.length === 0 && _voiceRetries < 20) {
-    setTimeout(retryLoadVoices, _voiceRetries < 5 ? 200 : 500);
+  if(voices.length===0&&_voiceRetries<10){
+    setTimeout(retryLoadVoices, _voiceRetries*300);
   }
 }
-if (typeof speechSynthesis !== 'undefined') {
-  speechSynthesis.onvoiceschanged = loadVoices;
-  setTimeout(retryLoadVoices, 100);
+if(typeof speechSynthesis!=='undefined'){
+  speechSynthesis.onvoiceschanged=loadVoices;
+  setTimeout(retryLoadVoices,100);
 }
 
-// ═══════════════════════════════════════════════════════════
-// SPEAK ENGINE — designed for iOS/iPad reliability
-//
-// Key iOS/Edge fixes:
-// 1. Resume the synthesis engine before every speak (iOS suspends it)
-// 2. Fallback timeout so onend-never-fires can't stall the loop
-// 3. Debounce: ignore rapid duplicate calls
-// 4. Cancel + 50ms settle gap before new utterance (iOS needs this)
-// 5. Single completion callback — never double-fires
-// ═══════════════════════════════════════════════════════════
-let _speakTimer    = null;   // safety timeout handle
-let _speakDone     = null;   // current completion callback
-let _speakBusy     = false;  // guard against re-entry
-let _cancelSettle  = null;   // post-cancel settle timer
-
-function speak(txt, onDone) {
-  if (!txt || typeof speechSynthesis === 'undefined') {
-    if (onDone) onDone();
-    return;
-  }
-  if (!voices.length) loadVoices();
-
-  // Cancel any in-flight utterance cleanly
-  clearTimeout(_speakTimer);
-  clearTimeout(_cancelSettle);
-  _speakDone = null;
-  _speakBusy = false;
+function speak(txt){
+  if(!txt||typeof speechSynthesis==='undefined')return;
+  // If voices haven't loaded yet, try once more
+  if(!voices.length)loadVoices();
   speechSynthesis.cancel();
-
-  // iOS/Edge: must wait ~50ms after cancel before speaking again
-  _cancelSettle = setTimeout(() => {
-    _doSpeak(txt, onDone);
-  }, 60);
+  const u=new SpeechSynthesisUtterance(txt);
+  // Always set lang to zh-CN so browser knows it's Chinese even without a specific voice
+  u.lang=selVoice?selVoice.lang:'zh-CN';
+  u.rate=+document.getElementById('speechRate').value||0.8;
+  if(selVoice)u.voice=selVoice;
+  const btn=document.getElementById('abtn');
+  if(btn)btn.classList.add('on');
+  u.onend=u.onerror=()=>{const b=document.getElementById('abtn');if(b)b.classList.remove('on');};
+  speechSynthesis.speak(u);
 }
 
-function _doSpeak(txt, onDone) {
-  // iOS WebKit often pauses synthesis — kick it awake
-  if (speechSynthesis.paused) {
-    try { speechSynthesis.resume(); } catch(e){}
-  }
-
-  const u = new SpeechSynthesisUtterance(txt);
-  u.lang  = selVoice ? selVoice.lang : 'zh-CN';
-  u.rate  = parseFloat(document.getElementById('speechRate').value) || 0.8;
-  if (selVoice) u.voice = selVoice;
-
-  // Estimate duration for safety timeout:
-  // Chinese chars ~0.5s each at rate 0.8, minimum 2s, max 8s
-  const charCount   = txt.length;
-  const estDuration = Math.min(8000, Math.max(2000, charCount * 600 / u.rate));
-
-  _speakBusy = true;
-  let _fired = false;
-
-  function finish() {
-    if (_fired) return; // prevent double-fire
-    _fired = true;
-    _speakBusy = false;
-    clearTimeout(_speakTimer);
-    // Update audio button state
-    const btn = document.getElementById('abtn');
-    if (btn) btn.classList.remove('on');
-    if (onDone) onDone();
-  }
-
-  u.onend   = finish;
-  u.onerror = (e) => {
-    // 'interrupted' is normal on iOS when we cancel — ignore it
-    if (e.error !== 'interrupted') finish();
-    else { _fired = false; } // allow retry path
-  };
-
-  // Safety timeout — if onend never fires (common on iOS/Edge),
-  // we advance anyway so the loop doesn't stall
-  _speakTimer = setTimeout(() => {
-    if (!_fired) {
-      console.warn('[speak] onend timeout — forcing completion');
-      finish();
-    }
-  }, estDuration + 1500);
-
-  // Update audio button
-  const btn = document.getElementById('abtn');
-  if (btn) btn.classList.add('on');
-
-  try {
-    speechSynthesis.speak(u);
-  } catch(e) {
-    finish();
-  }
-
-  // iOS Chrome bug: synthesis stalls silently — detect and recover
-  setTimeout(() => {
-    if (!_fired && speechSynthesis.paused) {
-      try { speechSynthesis.resume(); } catch(e){}
-    }
-  }, 300);
-}
-
-// ═══════════════════════════════════════════════════════════
-// AUTOPLAY — sequential queue, no timer/onend race
-// Each step: speak → wait for completion → delay → next step
-// ═══════════════════════════════════════════════════════════
-function startAP() {
-  if (apActive || deck.length === 0) return;
-  apActive = true; apLoopN = 0;
+// ── Autoplay ─────────────────────────────────────────────────────────────────
+// Autoplay: show front → play audio → wait nextDelay → advance (no auto-flip)
+// User can still click to flip manually during autoplay
+function startAP(){
+  if(apActive||deck.length===0)return;
+  apActive=true;
+  apLoopN=0;
   document.getElementById('apStart').classList.add('on');
-  document.getElementById('apSt').textContent = 'Playing…';
-  // iOS: user gesture required for first speech — we're inside a click handler, so this is fine
-  _runAPStep();
+  document.getElementById('apSt').textContent='Playing…';
+  runAP();
 }
 
-function _runAPStep() {
-  if (!apActive) return;
-
-  const lc = Math.max(1, parseInt(document.getElementById('wordLoops').value) || 1);
-  const nd = parseFloat(document.getElementById('nextDelay').value) || 0;
-  const w  = deck[idx];
-
-  // Update loop dots
-  loopN = apLoopN;
-  render();
-
-  // Speak the word, then on completion decide what's next
-  speak(w.w, () => {
-    if (!apActive) return;
-
+function runAP(){
+  if(!apActive)return;
+  const wl=Math.max(1,+document.getElementById('wordLoops').value||1);
+  const nd=+document.getElementById('nextDelay').value||3;
+  const w=deck[idx];
+  face='front';render();
+  speak(w.w);
+  apTimer=setTimeout(()=>{
+    if(!apActive)return;
     apLoopN++;
-
-    if (apLoopN < lc) {
-      // Still looping this word — brief pause then repeat
-      apTimer = setTimeout(() => {
-        if (apActive) _runAPStep();
-      }, 400);
-    } else {
-      // Done with this word — move to next after nextDelay
-      apLoopN = 0; loopN = 0;
-      if (nd === 0) {
-        // Manual advance mode — stop autoplay, user navigates
-        apActive = false;
+    if(apLoopN<wl){
+      loopN=apLoopN;
+      render();
+      runAP();
+    }else{
+      apLoopN=0;loopN=0;
+      if(idx<deck.length-1){idx++;runAP();}
+      else{
+        apActive=false;
         document.getElementById('apStart').classList.remove('on');
-        document.getElementById('apSt').textContent = 'Paused — tap Next';
+        document.getElementById('apSt').textContent='Done ✓';
         render();
-      } else {
-        apTimer = setTimeout(() => {
-          if (!apActive) return;
-          if (idx < deck.length - 1) {
-            idx++;
-            _runAPStep();
-          } else {
-            apActive = false;
-            document.getElementById('apStart').classList.remove('on');
-            document.getElementById('apSt').textContent = 'Done ✓';
-            render();
-          }
-        }, nd * 1000);
       }
     }
-  });
+  },nd*1000);
 }
 
-function stopAP() {
-  apActive = false;
-  clearTimeout(apTimer);
-  clearTimeout(_speakTimer);
-  clearTimeout(_cancelSettle);
-  if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
-  _speakBusy = false; _speakDone = null;
-  const b = document.getElementById('apStart'); if (b) b.classList.remove('on');
-  const s = document.getElementById('apSt');   if (s) s.textContent = 'Off';
-  const btn = document.getElementById('abtn'); if (btn) btn.classList.remove('on');
+function stopAP(){
+  apActive=false;clearTimeout(apTimer);
+  const b=document.getElementById('apStart');if(b)b.classList.remove('on');
+  const s=document.getElementById('apSt');if(s)s.textContent='Off';
 }
 
-function resetAP() {
-  stopAP(); idx = 0; loopN = 0; apLoopN = 0; render();
-  const s = document.getElementById('apSt'); if (s) s.textContent = 'Ready';
+function resetAP(){
+  stopAP();idx=0;face='front';loopN=0;apLoopN=0;
+  render();
+  const s=document.getElementById('apSt');if(s)s.textContent='Ready';
 }
 
-document.getElementById('speechRate').addEventListener('input', function() {
-  document.getElementById('rateVal').textContent = parseFloat(this.value).toFixed(2) + '×';
+// ── Events ───────────────────────────────────────────────────────────────────
+document.getElementById('hskChips').addEventListener('click',e=>{
+  const c=e.target.closest('.chip');if(!c)return;
+  document.querySelectorAll('#hskChips .chip').forEach(x=>x.classList.remove('on'));
+  c.classList.add('on');applyFilters();
 });
-
+document.getElementById('catFilter').addEventListener('change',applyFilters);
+document.getElementById('toneFilter').addEventListener('change',applyFilters);
+document.getElementById('prevBtn').addEventListener('click',()=>{stopAP();goPrev();});
+document.getElementById('nextBtn').addEventListener('click',()=>{stopAP();goNext();});
+document.getElementById('shuffleBtn').addEventListener('click',()=>{stopAP();shuffleDeck();});
+document.getElementById('apStart').addEventListener('click',startAP);
+document.getElementById('apStop').addEventListener('click',stopAP);
+document.getElementById('apReset').addEventListener('click',resetAP);
+document.getElementById('speechRate').addEventListener('input',function(){
+  document.getElementById('rateVal').textContent=parseFloat(this.value).toFixed(2)+'×';
+});
 document.getElementById('voiceDebugBtn').addEventListener('click',()=>{
   const dbg=document.getElementById('voiceDebug');
   const btn=document.getElementById('voiceDebugBtn');
@@ -1171,54 +1064,7 @@ document.addEventListener('keydown',e=>{
 });
 
 // ── Init ─────────────────────────────────────────────────────────────────────
-
-// iOS/iPadOS detection
-function isIOS() {
-  return /iP(ad|hone|od)/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-}
-
-// Unlock Web Speech API on iOS — must happen inside a user gesture
-let _audioUnlocked = false;
-
-function unlockAudio() {
-  if (_audioUnlocked) return;
-  _audioUnlocked = true;
-  // Trigger a silent utterance inside a user gesture — this unlocks Web Speech on iOS
-  if (typeof speechSynthesis !== 'undefined') {
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(' ');
-    u.volume = 0; u.rate = 2;
-    if (selVoice) u.voice = selVoice;
-    try { speechSynthesis.speak(u); } catch(e){}
-  }
-  // Hide the audio unlock strip, keep install tip visible
-  const strip = document.getElementById('audioUnlockStrip');
-  if (strip) strip.style.display = 'none';
-}
-
-if (isIOS()) {
-  const banner = document.getElementById('iosBanner');
-  if (banner) {
-    banner.style.display = 'block';
-    // Auto-unlock on first touch anywhere on the page
-    document.body.addEventListener('touchstart', function _u() {
-      document.body.removeEventListener('touchstart', _u);
-      unlockAudio();
-    }, { once: true, passive: true });
-  }
-}
-
-// Keep speechSynthesis alive on iOS — it auto-suspends after ~30s idle
-setInterval(() => {
-  if (typeof speechSynthesis === 'undefined') return;
-  if (speechSynthesis.paused) { try { speechSynthesis.resume(); } catch(e){} }
-}, 8000);
-
 applyFilters();
-
-
-
 
 </script>
 </body>
