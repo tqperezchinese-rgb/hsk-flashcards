@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSK Flashcards 1-5</title>
+
+<style>
+:root{
+  --ink:#1a1714;--paper:#f5f0e8;--paper2:#ede7d9;--paper3:#e2dace;
+  --accent:#c0392b;--accent2:#8b5e3c;--muted:#7a7268;
+  --border:rgba(26,23,20,0.12);--border2:rgba(26,23,20,0.22);
+  --radius:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;background:var(--paper);color:var(--ink);min-height:100vh}
+.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{background:var(--paper2);border-right:1px solid var(--border2);padding:1.25rem 1rem;display:flex;flex-direction:column;gap:0.75rem;overflow-y:auto;position:sticky;top:0;height:100vh}
+.logo{font-family:Georgia,'Times New Roman',serif;font-size:1.3rem;font-weight:300;padding-bottom:0.6rem;border-bottom:1px solid var(--border)}
+.logo span{color:var(--accent)}
+.logo small{display:block;font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:10px;color:var(--muted);font-weight:300;margin-top:2px}
+.fl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.chips{display:flex;flex-wrap:wrap;gap:3px}
+.chip{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:11px;padding:3px 8px;border:1px solid var(--border2);border-radius:20px;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s}
+.chip:hover{border-color:var(--ink);color:var(--ink)}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+select{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:11px;padding:5px 8px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--paper);color:var(--ink);width:100%}
+.lrow{display:flex;align-items:center;gap:6px;margin-top:4px}
+.ll{font-size:10px;color:var(--muted);white-space:nowrap}
+input[type=number]{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:11px;width:44px;padding:4px 6px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--paper);color:var(--ink);text-align:center}
+input[type=range]{flex:1;cursor:pointer}
+hr{border:none;border-top:1px solid var(--border);margin:.1rem 0}
+.pill{font-size:10px;color:var(--muted);background:var(--paper3);border-radius:20px;padding:3px 10px;display:inline-block}
+.sbtn{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:11px;padding:5px 10px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--ink);cursor:pointer;transition:all .15s;width:100%}
+.sbtn:hover{background:var(--paper3)}
+
+/* MAIN */
+.main{display:flex;flex-direction:column;align-items:center;padding:2rem 2rem 1.5rem;gap:1rem;flex:1}
+.topbar{width:100%;max-width:600px;display:flex;align-items:center;justify-content:space-between}
+.pinfo{font-size:11px;color:var(--muted)}
+.pinfo strong{color:var(--ink);font-weight:400}
+
+/* CARD — no 3D, simple show/hide */
+.card-outer{width:100%;max-width:580px;position:relative}
+.card{width:100%;min-height:340px;border-radius:12px;border:1px solid var(--border2);background:var(--paper);box-shadow:0 2px 8px rgba(26,23,20,.08),0 8px 28px rgba(26,23,20,.06);padding:2rem;position:relative;cursor:pointer;user-select:none}
+.card-badge-row{display:flex;align-items:center;gap:6px;margin-bottom:1.2rem}
+.hbadge{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--paper2);border:1px solid var(--border);border-radius:20px;padding:2px 8px}
+.cbadge{font-size:10px;color:var(--accent2);background:rgba(139,94,60,.08);border-radius:20px;padding:2px 8px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.abtn{position:absolute;top:12px;right:14px;width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);transition:all .15s;z-index:2}
+.abtn:hover{background:var(--paper2);color:var(--ink)}
+.abtn.on{color:var(--accent);border-color:var(--accent)}
+
+/* FRONT face */
+.front-body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;padding:1.5rem 0 2rem}
+.ch{font-family:'PingFang SC','Noto Sans CJK SC','Microsoft YaHei',serif;font-size:88px;font-weight:300;line-height:1;color:var(--ink);letter-spacing:-3px}
+.py{font-size:21px;color:var(--muted);letter-spacing:.02em}
+.zy{font-size:14px;color:var(--muted);opacity:.65;letter-spacing:3px}
+.flip-hint{position:absolute;bottom:12px;right:16px;font-size:10px;color:var(--muted);opacity:.5}
+
+/* BACK face */
+.back-top{text-align:center;padding-bottom:.8rem;border-bottom:1px solid var(--border);margin-bottom:.8rem}
+.meaning{font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:300;color:var(--ink);margin-bottom:4px}
+.back-py{font-size:14px;color:var(--muted)}
+.back-zy{font-size:12px;color:var(--muted);opacity:.65;margin-top:2px;letter-spacing:2px}
+.chars-lbl{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.chars-grid{display:flex;flex-wrap:wrap;gap:8px}
+.ctile{background:var(--paper2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;text-align:center;flex:1;min-width:72px;max-width:130px}
+.ctile .cc{font-family:'PingFang SC','Noto Sans CJK SC','Microsoft YaHei',serif;font-size:28px;font-weight:300;display:block;margin-bottom:2px}
+.ctile .cp{font-size:11px;color:var(--muted)}
+.ctile .cz{font-size:10px;color:var(--muted);opacity:.65;letter-spacing:1px}
+.ctile .cm{font-size:11px;color:var(--ink);margin-top:3px}
+.face-label{position:absolute;bottom:12px;left:16px;font-size:10px;color:var(--muted);opacity:.45;font-style:italic}
+
+/* NAV */
+.navrow{width:100%;max-width:580px;display:flex;align-items:center;gap:8px}
+.nbtn{flex:1;font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:12px;padding:10px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--ink);cursor:pointer;transition:all .15s}
+.nbtn:hover{background:var(--paper2)}
+.nbtn:disabled{opacity:.3;cursor:not-allowed}
+.prog{font-size:12px;color:var(--muted);min-width:60px;text-align:center}
+.shuf{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:11px;padding:10px 14px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s}
+.shuf:hover{background:var(--paper2);color:var(--ink)}
+
+/* LOOP DOTS */
+.ldots-row{width:100%;max-width:580px;display:flex;align-items:center;gap:8px}
+.ldots{display:flex;gap:4px}
+.ld{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:background .2s}
+.ld.done{background:var(--accent)}
+.ld.cur{background:var(--accent2)}
+
+/* AUTOPLAY BAR */
+.apbar{width:100%;max-width:580px;display:flex;align-items:center;gap:8px;background:var(--paper2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px}
+.aplbl{font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;flex:1}
+.apst{font-size:11px;color:var(--accent)}
+.apbtn{font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;font-size:11px;padding:4px 10px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--ink);cursor:pointer;transition:all .15s}
+.apbtn:hover{background:var(--paper3)}
+.apbtn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.kbhint{font-size:9px;color:var(--muted);text-align:center;opacity:.6;letter-spacing:.04em}
+.nocard{text-align:center;padding:4rem 2rem;color:var(--muted)}
+.nocard h3{font-family:Georgia,'Times New Roman',serif;font-weight:300;font-size:1.4rem;margin-bottom:.5rem;color:var(--ink)}
+
+@media(max-width:700px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border2)}
+  .ch{font-size:62px}
+  .card{min-height:280px}
+}
+</style>
+
+
+<!-- iOS/iPadOS home screen meta tags -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HSK Flash">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a1714">
+
+<!-- iOS home screen icon (inline SVG → data URI) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%231a1714'/%3E%3Ctext x='256' y='360' font-size='320' text-anchor='middle' fill='%23f5f0e8' font-family='serif'%3E漢%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<!-- iOS install + audio unlock banner -->
+<div id="iosBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;font-family:monospace;font-size:12px;">
+  <!-- Audio unlock strip (shown first) -->
+  <div id="audioUnlockStrip" style="background:#1a1714;color:#f5f0e8;padding:10px 16px;text-align:center;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1)" onclick="unlockAudio()">
+    🔊 Tap anywhere to unlock audio — required on iPad/iOS
+  </div>
+  <!-- Install tip strip -->
+  <div id="installStrip" style="background:#2d6a4f;color:#f5f0e8;padding:8px 16px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px">
+    <span>💡 Install as app: tap</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+    <span>then <b>"Add to Home Screen"</b></span>
+    <button onclick="document.getElementById('installStrip').style.display='none'" style="background:transparent;border:1px solid rgba(255,255,255,0.4);color:white;padding:2px 8px;border-radius:3px;font-family:monospace;font-size:11px;cursor:pointer;margin-left:8px">✕</button>
+  </div>
+</div>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">漢字 <span>Flash</span><small>HSK Old Standard 1–5</small></div>
+
+    <div>
+      <div class="fl">HSK Level</div>
+      <div class="chips" id="hskChips">
+        <button class="chip on" data-hsk="all">All</button>
+        <button class="chip" data-hsk="1">HSK 1</button>
+        <button class="chip" data-hsk="2">HSK 2</button>
+        <button class="chip" data-hsk="3">HSK 3</button>
+        <button class="chip" data-hsk="4">HSK 4</button>
+        <button class="chip" data-hsk="5">HSK 5</button>
+      </div>
+    </div>
+    <hr>
+    <div>
+      <div class="fl">Category</div>
+      <select id="catFilter">
+        <option value="all">All categories</option>
+        <option value="food">🍜 Food &amp; Drink</option>
+        <option value="kitchen">🍳 Kitchen &amp; Cooking</option>
+        <option value="sports">⚽ Sports &amp; Exercise</option>
+        <option value="travel">✈️ Travel &amp; Transport</option>
+        <option value="family">👨‍👩‍👧 Family &amp; People</option>
+        <option value="body">🫀 Body &amp; Health</option>
+        <option value="home">🏠 Home &amp; Objects</option>
+        <option value="school">📚 School &amp; Study</option>
+        <option value="work">💼 Work &amp; Business</option>
+        <option value="nature">🌿 Nature &amp; Weather</option>
+        <option value="time">🕐 Time &amp; Numbers</option>
+        <option value="actions">🏃 Actions &amp; Verbs</option>
+        <option value="emotions">❤️ Emotions &amp; Mind</option>
+        <option value="grammar">📝 Grammar Particles</option>
+        <option value="places">📍 Places &amp; Locations</option>
+        <option value="clothing">👔 Clothing</option>
+        <option value="tech">💻 Technology</option>
+        <option value="social">💬 Social &amp; Greetings</option>
+        <option value="money">💰 Money &amp; Shopping</option>
+        <option value="colors">🎨 Colors</option>
+        <option value="animals">🐾 Animals</option>
+      </select>
+    </div>
+    <hr>
+    <div>
+      <div class="fl">Tone filter</div>
+      <select id="toneFilter">
+        <option value="all">Any tone pattern</option>
+        <optgroup label="Single tone (contains)">
+          <option value="1">Tone 1 — ā ē ī ō ū</option>
+          <option value="2">Tone 2 — á é í ó ú</option>
+          <option value="3">Tone 3 — ǎ ě ǐ ǒ ǔ</option>
+          <option value="4">Tone 4 — à è ì ò ù</option>
+          <option value="5">Neutral — a e i o u</option>
+        </optgroup>
+        <optgroup label="First two syllables">
+          <option value="11">1+1</option><option value="12">1+2</option><option value="13">1+3</option><option value="14">1+4</option><option value="15">1+neutral</option>
+          <option value="21">2+1</option><option value="22">2+2</option><option value="23">2+3</option><option value="24">2+4</option><option value="25">2+neutral</option>
+          <option value="31">3+1</option><option value="32">3+2</option><option value="33">3+3</option><option value="34">3+4</option><option value="35">3+neutral</option>
+          <option value="41">4+1</option><option value="42">4+2</option><option value="43">4+3</option><option value="44">4+4</option><option value="45">4+neutral</option>
+        </optgroup>
+      </select>
+    </div>
+    <hr>
+    <div>
+      <div class="fl">Loop settings</div>
+      <div class="lrow"><span class="ll">Repeat word</span><input type="number" id="wordLoops" value="1" min="1" max="10"><span class="ll">×</span></div>
+      <div class="lrow"><span class="ll">Auto-next delay</span><input type="number" id="nextDelay" value="0" min="0" max="20"><span class="ll">s (0=off)</span></div>
+    </div>
+    <hr>
+    <div>
+      <div class="fl">Voice</div>
+      <select id="voiceSelect" style="font-size:10px"></select>
+      <div class="lrow" style="margin-top:6px">
+        <span class="ll">Speed</span>
+        <input type="range" id="speechRate" min="0.5" max="1.5" step="0.05" value="0.8">
+        <span class="ll" id="rateVal" style="min-width:32px">0.8×</span>
+      </div>
+      <div class="lrow" style="margin-top:6px">
+        <button class="sbtn" id="voiceDebugBtn" style="font-size:9px;padding:4px 8px;width:auto;flex:1">🔍 Show all voices</button>
+      </div>
+      <div id="voiceDebug" style="display:none;margin-top:6px;max-height:200px;overflow-y:auto;background:var(--paper3);border-radius:4px;padding:6px;border:1px solid var(--border)"></div>
+    </div>
+    <hr>
+    <div id="statsEl" class="pill">Loading…</div>
+    <button class="sbtn" id="resetBtn">↺ Reset all filters</button>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="pinfo" id="pinfo">—</div>
+      <div style="font-size:10px;color:var(--muted)" id="loopSt"></div>
+    </div>
+
+    <div class="apbar">
+      <span class="aplbl">Autoplay</span>
+      <span class="apst" id="apSt">Off</span>
+      <button class="apbtn" id="apStart">▶ Start</button>
+      <button class="apbtn" id="apStop">■ Stop</button>
+      <button class="apbtn" id="apReset">↺</button>
+    </div>
+
+    <div class="ldots-row" id="ldotsRow" style="display:none">
+      <span style="font-size:10px;color:var(--muted)">Loop:</span>
+      <div class="ldots" id="ldots"></div>
+    </div>
+
+    <div id="cardArea"></div>
+
+    <div class="navrow" id="navrow" style="display:none">
+      <button class="nbtn" id="prevBtn">← Prev</button>
+      <span class="prog" id="progEl"></span>
+      <button class="nbtn" id="nextBtn">Next →</button>
+      <button class="shuf" id="shuffleBtn" title="Shuffle">⇄</button>
+    </div>
+
+    <div class="kbhint">Space/Enter = flip · ← → = navigate · P = audio</div>
+  </main>
+</div>
+
+<script>
+// HSK Old Standard Vocabulary 1-5
+// Format: {w:word, p:pinyin, z:zhuyin, m:meaning, hsk:level, cats:[categories], chars:[{c,p,z,m}]}
+const ALL_WORDS = [
+// ── HSK 1 ──
+{w:"爱",p:"ài",z:"ㄞˋ",m:"love; to love",hsk:1,cats:["emotions","actions"],chars:[{c:"爱",p:"ài",z:"ㄞˋ",m:"love"}]},
+{w:"八",p:"bā",z:"ㄅㄚ",m:"eight",hsk:1,cats:["time"],chars:[{c:"八",p:"bā",z:"ㄅㄚ",m:"eight"}]},
+{w:"爸爸",p:"bà ba",z:"ㄅㄚˋ ˙ㄅㄚ",m:"dad; father",hsk:1,cats:["family"],chars:[{c:"爸",p:"bà",z:"ㄅㄚˋ",m:"father"},{c:"爸",p:"ba",z:"˙ㄅㄚ",m:"(suffix)"}]},
+{w:"杯子",p:"bēi zi",z:"ㄅㄟ ˙ㄗ",m:"cup; glass",hsk:1,cats:["home","kitchen"],chars:[{c:"杯",p:"bēi",z:"ㄅㄟ",m:"cup"},{c:"子",p:"zi",z:"˙ㄗ",m:"(suffix)"}]},
+{w:"北京",p:"Běijīng",z:"ㄅㄟˇ ㄐㄧㄥ",m:"Beijing",hsk:1,cats:["places"],chars:[{c:"北",p:"běi",z:"ㄅㄟˇ",m:"north"},{c:"京",p:"jīng",z:"ㄐㄧㄥ",m:"capital"}]},
+{w:"不",p:"bù",z:"ㄅㄨˋ",m:"no; not",hsk:1,cats:["grammar"],chars:[{c:"不",p:"bù",z:"ㄅㄨˋ",m:"not"}]},
+{w:"不客气",p:"bú kèqi",z:"ㄅㄨˊ ㄎㄜˋ˙ㄑㄧ",m:"you're welcome",hsk:1,cats:["social"],chars:[{c:"不",p:"bú",z:"ㄅㄨˊ",m:"not"},{c:"客",p:"kè",z:"ㄎㄜˋ",m:"guest"},{c:"气",p:"qi",z:"˙ㄑㄧ",m:"air"}]},
+{w:"菜",p:"cài",z:"ㄘㄞˋ",m:"dish; vegetable",hsk:1,cats:["food","kitchen"],chars:[{c:"菜",p:"cài",z:"ㄘㄞˋ",m:"vegetable"}]},
+{w:"茶",p:"chá",z:"ㄔㄚˊ",m:"tea",hsk:1,cats:["food"],chars:[{c:"茶",p:"chá",z:"ㄔㄚˊ",m:"tea"}]},
+{w:"吃",p:"chī",z:"ㄔ",m:"to eat",hsk:1,cats:["actions","food"],chars:[{c:"吃",p:"chī",z:"ㄔ",m:"eat"}]},
+{w:"出租车",p:"chūzūchē",z:"ㄔㄨ ㄗㄨ ㄔㄜ",m:"taxi",hsk:1,cats:["travel"],chars:[{c:"出",p:"chū",z:"ㄔㄨ",m:"out"},{c:"租",p:"zū",z:"ㄗㄨ",m:"rent"},{c:"车",p:"chē",z:"ㄔㄜ",m:"vehicle"}]},
+{w:"打电话",p:"dǎ diànhuà",z:"ㄉㄚˇ ㄉㄧㄢˋ ㄏㄨㄚˋ",m:"to make a phone call",hsk:1,cats:["actions","tech"],chars:[{c:"打",p:"dǎ",z:"ㄉㄚˇ",m:"make"},{c:"电",p:"diàn",z:"ㄉㄧㄢˋ",m:"electricity"},{c:"话",p:"huà",z:"ㄏㄨㄚˋ",m:"speech"}]},
+{w:"大",p:"dà",z:"ㄉㄚˋ",m:"big; large",hsk:1,cats:["grammar"],chars:[{c:"大",p:"dà",z:"ㄉㄚˋ",m:"big"}]},
+{w:"的",p:"de",z:"˙ㄉㄜ",m:"(possessive particle)",hsk:1,cats:["grammar"],chars:[{c:"的",p:"de",z:"˙ㄉㄜ",m:"possessive"}]},
+{w:"点",p:"diǎn",z:"ㄉㄧㄢˇ",m:"o'clock; point",hsk:1,cats:["time","grammar"],chars:[{c:"点",p:"diǎn",z:"ㄉㄧㄢˇ",m:"dot; o'clock"}]},
+{w:"电脑",p:"diànnǎo",z:"ㄉㄧㄢˋ ㄋㄠˇ",m:"computer",hsk:1,cats:["tech","home"],chars:[{c:"电",p:"diàn",z:"ㄉㄧㄢˋ",m:"electricity"},{c:"脑",p:"nǎo",z:"ㄋㄠˇ",m:"brain"}]},
+{w:"电视",p:"diànshì",z:"ㄉㄧㄢˋ ㄕˋ",m:"television",hsk:1,cats:["tech","home"],chars:[{c:"电",p:"diàn",z:"ㄉㄧㄢˋ",m:"electricity"},{c:"视",p:"shì",z:"ㄕˋ",m:"vision"}]},
+{w:"东西",p:"dōngxi",z:"ㄉㄨㄥ ˙ㄒㄧ",m:"thing; stuff",hsk:1,cats:["grammar"],chars:[{c:"东",p:"dōng",z:"ㄉㄨㄥ",m:"east"},{c:"西",p:"xi",z:"˙ㄒㄧ",m:"west"}]},
+{w:"都",p:"dōu",z:"ㄉㄡ",m:"all; both",hsk:1,cats:["grammar"],chars:[{c:"都",p:"dōu",z:"ㄉㄡ",m:"all"}]},
+{w:"读",p:"dú",z:"ㄉㄨˊ",m:"to read aloud",hsk:1,cats:["actions","school"],chars:[{c:"读",p:"dú",z:"ㄉㄨˊ",m:"read"}]},
+{w:"对不起",p:"duìbuqǐ",z:"ㄉㄨㄟˋ ˙ㄅㄨ ㄑㄧˇ",m:"sorry",hsk:1,cats:["social"],chars:[{c:"对",p:"duì",z:"ㄉㄨㄟˋ",m:"correct"},{c:"不",p:"bu",z:"˙ㄅㄨ",m:"not"},{c:"起",p:"qǐ",z:"ㄑㄧˇ",m:"rise"}]},
+{w:"多",p:"duō",z:"ㄉㄨㄛ",m:"many; much",hsk:1,cats:["grammar"],chars:[{c:"多",p:"duō",z:"ㄉㄨㄛ",m:"many"}]},
+{w:"多少",p:"duōshao",z:"ㄉㄨㄛ ˙ㄕㄠ",m:"how many; how much",hsk:1,cats:["grammar","money"],chars:[{c:"多",p:"duō",z:"ㄉㄨㄛ",m:"many"},{c:"少",p:"shao",z:"˙ㄕㄠ",m:"few"}]},
+{w:"儿子",p:"érzi",z:"ㄦˊ ˙ㄗ",m:"son",hsk:1,cats:["family"],chars:[{c:"儿",p:"ér",z:"ㄦˊ",m:"child"},{c:"子",p:"zi",z:"˙ㄗ",m:"(suffix)"}]},
+{w:"二",p:"èr",z:"ㄦˋ",m:"two",hsk:1,cats:["time"],chars:[{c:"二",p:"èr",z:"ㄦˋ",m:"two"}]},
+{w:"饭店",p:"fàndiàn",z:"ㄈㄢˋ ㄉㄧㄢˋ",m:"restaurant; hotel",hsk:1,cats:["food","places","travel"],chars:[{c:"饭",p:"fàn",z:"ㄈㄢˋ",m:"meal"},{c:"店",p:"diàn",z:"ㄉㄧㄢˋ",m:"shop"}]},
+{w:"飞机",p:"fēijī",z:"ㄈㄟ ㄐㄧ",m:"airplane",hsk:1,cats:["travel"],chars:[{c:"飞",p:"fēi",z:"ㄈㄟ",m:"fly"},{c:"机",p:"jī",z:"ㄐㄧ",m:"machine"}]},
+{w:"分钟",p:"fēnzhōng",z:"ㄈㄣ ㄓㄨㄥ",m:"minute",hsk:1,cats:["time"],chars:[{c:"分",p:"fēn",z:"ㄈㄣ",m:"minute"},{c:"钟",p:"zhōng",z:"ㄓㄨㄥ",m:"clock"}]},
+{w:"高兴",p:"gāoxìng",z:"ㄍㄠ ㄒㄧㄥˋ",m:"happy; glad",hsk:1,cats:["emotions"],chars:[{c:"高",p:"gāo",z:"ㄍㄠ",m:"tall"},{c:"兴",p:"xìng",z:"ㄒㄧㄥˋ",m:"mood"}]},
+{w:"个",p:"gè",z:"ㄍㄜˋ",m:"(general measure word)",hsk:1,cats:["grammar"],chars:[{c:"个",p:"gè",z:"ㄍㄜˋ",m:"(measure word)"}]},
+{w:"工作",p:"gōngzuò",z:"ㄍㄨㄥ ㄗㄨㄛˋ",m:"work; job",hsk:1,cats:["work","actions"],chars:[{c:"工",p:"gōng",z:"ㄍㄨㄥ",m:"work"},{c:"作",p:"zuò",z:"ㄗㄨㄛˋ",m:"make"}]},
+{w:"狗",p:"gǒu",z:"ㄍㄡˇ",m:"dog",hsk:1,cats:["animals"],chars:[{c:"狗",p:"gǒu",z:"ㄍㄡˇ",m:"dog"}]},
+{w:"汉语",p:"Hànyǔ",z:"ㄏㄢˋ ㄩˇ",m:"Chinese (Mandarin)",hsk:1,cats:["school","social"],chars:[{c:"汉",p:"hàn",z:"ㄏㄢˋ",m:"Han"},{c:"语",p:"yǔ",z:"ㄩˇ",m:"language"}]},
+{w:"好",p:"hǎo",z:"ㄏㄠˇ",m:"good; well",hsk:1,cats:["grammar","social"],chars:[{c:"好",p:"hǎo",z:"ㄏㄠˇ",m:"good"}]},
+{w:"号",p:"hào",z:"ㄏㄠˋ",m:"number; date",hsk:1,cats:["time"],chars:[{c:"号",p:"hào",z:"ㄏㄠˋ",m:"number"}]},
+{w:"喝",p:"hē",z:"ㄏㄜ",m:"to drink",hsk:1,cats:["actions","food"],chars:[{c:"喝",p:"hē",z:"ㄏㄜ",m:"drink"}]},
+{w:"和",p:"hé",z:"ㄏㄜˊ",m:"and; with",hsk:1,cats:["grammar"],chars:[{c:"和",p:"hé",z:"ㄏㄜˊ",m:"and"}]},
+{w:"很",p:"hěn",z:"ㄏㄣˇ",m:"very; quite",hsk:1,cats:["grammar"],chars:[{c:"很",p:"hěn",z:"ㄏㄣˇ",m:"very"}]},
+{w:"后面",p:"hòumiàn",z:"ㄏㄡˋ ㄇㄧㄢˋ",m:"behind; at the back",hsk:1,cats:["places","grammar"],chars:[{c:"后",p:"hòu",z:"ㄏㄡˋ",m:"behind"},{c:"面",p:"miàn",z:"ㄇㄧㄢˋ",m:"side"}]},
+{w:"回",p:"huí",z:"ㄏㄨㄟˊ",m:"to return",hsk:1,cats:["actions"],chars:[{c:"回",p:"huí",z:"ㄏㄨㄟˊ",m:"return"}]},
+{w:"会",p:"huì",z:"ㄏㄨㄟˋ",m:"can; will",hsk:1,cats:["grammar"],chars:[{c:"会",p:"huì",z:"ㄏㄨㄟˋ",m:"can"}]},
+{w:"叫",p:"jiào",z:"ㄐㄧㄠˋ",m:"to call; to be called",hsk:1,cats:["actions","social"],chars:[{c:"叫",p:"jiào",z:"ㄐㄧㄠˋ",m:"call"}]},
+{w:"今天",p:"jīntiān",z:"ㄐㄧㄣ ㄊㄧㄢ",m:"today",hsk:1,cats:["time"],chars:[{c:"今",p:"jīn",z:"ㄐㄧㄣ",m:"today"},{c:"天",p:"tiān",z:"ㄊㄧㄢ",m:"day"}]},
+{w:"九",p:"jiǔ",z:"ㄐㄧㄡˇ",m:"nine",hsk:1,cats:["time"],chars:[{c:"九",p:"jiǔ",z:"ㄐㄧㄡˇ",m:"nine"}]},
+{w:"开",p:"kāi",z:"ㄎㄞ",m:"to open; to drive",hsk:1,cats:["actions"],chars:[{c:"开",p:"kāi",z:"ㄎㄞ",m:"open"}]},
+{w:"看",p:"kàn",z:"ㄎㄢˋ",m:"to look; to watch",hsk:1,cats:["actions"],chars:[{c:"看",p:"kàn",z:"ㄎㄢˋ",m:"look"}]},
+{w:"看见",p:"kànjiàn",z:"ㄎㄢˋ ㄐㄧㄢˋ",m:"to see; to catch sight of",hsk:1,cats:["actions"],chars:[{c:"看",p:"kàn",z:"ㄎㄢˋ",m:"look"},{c:"见",p:"jiàn",z:"ㄐㄧㄢˋ",m:"see"}]},
+{w:"来",p:"lái",z:"ㄌㄞˊ",m:"to come",hsk:1,cats:["actions"],chars:[{c:"来",p:"lái",z:"ㄌㄞˊ",m:"come"}]},
+{w:"老师",p:"lǎoshī",z:"ㄌㄠˇ ㄕ",m:"teacher",hsk:1,cats:["school","work"],chars:[{c:"老",p:"lǎo",z:"ㄌㄠˇ",m:"old"},{c:"师",p:"shī",z:"ㄕ",m:"teacher"}]},
+{w:"了",p:"le",z:"˙ㄌㄜ",m:"(completion particle)",hsk:1,cats:["grammar"],chars:[{c:"了",p:"le",z:"˙ㄌㄜ",m:"(particle)"}]},
+{w:"冷",p:"lěng",z:"ㄌㄥˇ",m:"cold",hsk:1,cats:["nature","body"],chars:[{c:"冷",p:"lěng",z:"ㄌㄥˇ",m:"cold"}]},
+{w:"里",p:"lǐ",z:"ㄌㄧˇ",m:"inside; within",hsk:1,cats:["grammar","places"],chars:[{c:"里",p:"lǐ",z:"ㄌㄧˇ",m:"inside"}]},
+{w:"六",p:"liù",z:"ㄌㄧㄡˋ",m:"six",hsk:1,cats:["time"],chars:[{c:"六",p:"liù",z:"ㄌㄧㄡˋ",m:"six"}]},
+{w:"妈妈",p:"māma",z:"ㄇㄚ ˙ㄇㄚ",m:"mom; mother",hsk:1,cats:["family"],chars:[{c:"妈",p:"mā",z:"ㄇㄚ",m:"mother"},{c:"妈",p:"ma",z:"˙ㄇㄚ",m:"(suffix)"}]},
+{w:"吗",p:"ma",z:"˙ㄇㄚ",m:"(question particle)",hsk:1,cats:["grammar"],chars:[{c:"吗",p:"ma",z:"˙ㄇㄚ",m:"(question)"}]},
+{w:"猫",p:"māo",z:"ㄇㄠ",m:"cat",hsk:1,cats:["animals"],chars:[{c:"猫",p:"māo",z:"ㄇㄠ",m:"cat"}]},
+{w:"没关系",p:"méiguānxi",z:"ㄇㄟˊ ㄍㄨㄢ ˙ㄒㄧ",m:"never mind; it's okay",hsk:1,cats:["social"],chars:[{c:"没",p:"méi",z:"ㄇㄟˊ",m:"not"},{c:"关",p:"guān",z:"ㄍㄨㄢ",m:"relate"},{c:"系",p:"xi",z:"˙ㄒㄧ",m:"connect"}]},
+{w:"没有",p:"méiyǒu",z:"ㄇㄟˊ ㄧㄡˇ",m:"don't have; there isn't",hsk:1,cats:["grammar"],chars:[{c:"没",p:"méi",z:"ㄇㄟˊ",m:"not"},{c:"有",p:"yǒu",z:"ㄧㄡˇ",m:"have"}]},
+{w:"米饭",p:"mǐfàn",z:"ㄇㄧˇ ㄈㄢˋ",m:"cooked rice",hsk:1,cats:["food","kitchen"],chars:[{c:"米",p:"mǐ",z:"ㄇㄧˇ",m:"rice"},{c:"饭",p:"fàn",z:"ㄈㄢˋ",m:"meal"}]},
+{w:"明天",p:"míngtiān",z:"ㄇㄧㄥˊ ㄊㄧㄢ",m:"tomorrow",hsk:1,cats:["time"],chars:[{c:"明",p:"míng",z:"ㄇㄧㄥˊ",m:"bright"},{c:"天",p:"tiān",z:"ㄊㄧㄢ",m:"day"}]},
+{w:"名字",p:"míngzi",z:"ㄇㄧㄥˊ ˙ㄗ",m:"name",hsk:1,cats:["social"],chars:[{c:"名",p:"míng",z:"ㄇㄧㄥˊ",m:"name"},{c:"字",p:"zi",z:"˙ㄗ",m:"character"}]},
+{w:"哪",p:"nǎ",z:"ㄋㄚˇ",m:"which; where",hsk:1,cats:["grammar"],chars:[{c:"哪",p:"nǎ",z:"ㄋㄚˇ",m:"which"}]},
+{w:"那",p:"nà",z:"ㄋㄚˋ",m:"that",hsk:1,cats:["grammar"],chars:[{c:"那",p:"nà",z:"ㄋㄚˋ",m:"that"}]},
+{w:"呢",p:"ne",z:"˙ㄋㄜ",m:"(question particle)",hsk:1,cats:["grammar"],chars:[{c:"呢",p:"ne",z:"˙ㄋㄜ",m:"(particle)"}]},
+{w:"能",p:"néng",z:"ㄋㄥˊ",m:"can; be able to",hsk:1,cats:["grammar"],chars:[{c:"能",p:"néng",z:"ㄋㄥˊ",m:"can"}]},
+{w:"你",p:"nǐ",z:"ㄋㄧˇ",m:"you",hsk:1,cats:["grammar","social"],chars:[{c:"你",p:"nǐ",z:"ㄋㄧˇ",m:"you"}]},
+{w:"你好",p:"nǐhǎo",z:"ㄋㄧˇ ㄏㄠˇ",m:"hello",hsk:1,cats:["social"],chars:[{c:"你",p:"nǐ",z:"ㄋㄧˇ",m:"you"},{c:"好",p:"hǎo",z:"ㄏㄠˇ",m:"good"}]},
+{w:"年",p:"nián",z:"ㄋㄧㄢˊ",m:"year",hsk:1,cats:["time"],chars:[{c:"年",p:"nián",z:"ㄋㄧㄢˊ",m:"year"}]},
+{w:"女儿",p:"nǚér",z:"ㄋㄩˇ ㄦˊ",m:"daughter",hsk:1,cats:["family"],chars:[{c:"女",p:"nǚ",z:"ㄋㄩˇ",m:"woman"},{c:"儿",p:"ér",z:"ㄦˊ",m:"child"}]},
+{w:"朋友",p:"péngyou",z:"ㄆㄥˊ ˙ㄧㄡ",m:"friend",hsk:1,cats:["social","family"],chars:[{c:"朋",p:"péng",z:"ㄆㄥˊ",m:"friend"},{c:"友",p:"you",z:"˙ㄧㄡ",m:"friend"}]},
+{w:"漂亮",p:"piàoliang",z:"ㄆㄧㄠˋ ˙ㄌㄧㄤ",m:"beautiful; pretty",hsk:1,cats:["grammar"],chars:[{c:"漂",p:"piào",z:"ㄆㄧㄠˋ",m:"float"},{c:"亮",p:"liang",z:"˙ㄌㄧㄤ",m:"bright"}]},
+{w:"苹果",p:"píngguǒ",z:"ㄆㄧㄥˊ ㄍㄨㄛˇ",m:"apple",hsk:1,cats:["food"],chars:[{c:"苹",p:"píng",z:"ㄆㄧㄥˊ",m:"apple"},{c:"果",p:"guǒ",z:"ㄍㄨㄛˇ",m:"fruit"}]},
+{w:"七",p:"qī",z:"ㄑㄧ",m:"seven",hsk:1,cats:["time"],chars:[{c:"七",p:"qī",z:"ㄑㄧ",m:"seven"}]},
+{w:"前面",p:"qiánmiàn",z:"ㄑㄧㄢˊ ㄇㄧㄢˋ",m:"in front; ahead",hsk:1,cats:["places"],chars:[{c:"前",p:"qián",z:"ㄑㄧㄢˊ",m:"front"},{c:"面",p:"miàn",z:"ㄇㄧㄢˋ",m:"direction"}]},
+{w:"钱",p:"qián",z:"ㄑㄧㄢˊ",m:"money",hsk:1,cats:["money"],chars:[{c:"钱",p:"qián",z:"ㄑㄧㄢˊ",m:"money"}]},
+{w:"请",p:"qǐng",z:"ㄑㄧㄥˇ",m:"please; to invite",hsk:1,cats:["social","grammar"],chars:[{c:"请",p:"qǐng",z:"ㄑㄧㄥˇ",m:"please"}]},
+{w:"去",p:"qù",z:"ㄑㄩˋ",m:"to go",hsk:1,cats:["actions"],chars:[{c:"去",p:"qù",z:"ㄑㄩˋ",m:"go"}]},
+{w:"热",p:"rè",z:"ㄖㄜˋ",m:"hot",hsk:1,cats:["nature","body"],chars:[{c:"热",p:"rè",z:"ㄖㄜˋ",m:"hot"}]},
+{w:"人",p:"rén",z:"ㄖㄣˊ",m:"person; people",hsk:1,cats:["family"],chars:[{c:"人",p:"rén",z:"ㄖㄣˊ",m:"person"}]},
+{w:"认识",p:"rènshi",z:"ㄖㄣˋ ˙ㄕ",m:"to know someone",hsk:1,cats:["actions","social"],chars:[{c:"认",p:"rèn",z:"ㄖㄣˋ",m:"recognize"},{c:"识",p:"shi",z:"˙ㄕ",m:"know"}]},
+{w:"日",p:"rì",z:"ㄖˋ",m:"sun; day; date",hsk:1,cats:["time","nature"],chars:[{c:"日",p:"rì",z:"ㄖˋ",m:"day"}]},
+{w:"三",p:"sān",z:"ㄙㄢ",m:"three",hsk:1,cats:["time"],chars:[{c:"三",p:"sān",z:"ㄙㄢ",m:"three"}]},
+{w:"商店",p:"shāngdiàn",z:"ㄕㄤ ㄉㄧㄢˋ",m:"shop; store",hsk:1,cats:["places","money"],chars:[{c:"商",p:"shāng",z:"ㄕㄤ",m:"commerce"},{c:"店",p:"diàn",z:"ㄉㄧㄢˋ",m:"shop"}]},
+{w:"上",p:"shàng",z:"ㄕㄤˋ",m:"up; on; above",hsk:1,cats:["grammar","places"],chars:[{c:"上",p:"shàng",z:"ㄕㄤˋ",m:"up"}]},
+{w:"上午",p:"shàngwǔ",z:"ㄕㄤˋ ㄨˇ",m:"morning (before noon)",hsk:1,cats:["time"],chars:[{c:"上",p:"shàng",z:"ㄕㄤˋ",m:"upper"},{c:"午",p:"wǔ",z:"ㄨˇ",m:"noon"}]},
+{w:"少",p:"shǎo",z:"ㄕㄠˇ",m:"few; less",hsk:1,cats:["grammar"],chars:[{c:"少",p:"shǎo",z:"ㄕㄠˇ",m:"few"}]},
+{w:"谁",p:"shéi",z:"ㄕㄟˊ",m:"who",hsk:1,cats:["grammar"],chars:[{c:"谁",p:"shéi",z:"ㄕㄟˊ",m:"who"}]},
+{w:"什么",p:"shénme",z:"ㄕㄣˊ ˙ㄇㄜ",m:"what",hsk:1,cats:["grammar"],chars:[{c:"什",p:"shén",z:"ㄕㄣˊ",m:"what"},{c:"么",p:"me",z:"˙ㄇㄜ",m:"(suffix)"}]},
+{w:"生日",p:"shēngrì",z:"ㄕㄥ ㄖˋ",m:"birthday",hsk:1,cats:["social","time"],chars:[{c:"生",p:"shēng",z:"ㄕㄥ",m:"life"},{c:"日",p:"rì",z:"ㄖˋ",m:"day"}]},
+{w:"时候",p:"shíhou",z:"ㄕˊ ˙ㄏㄡ",m:"time; moment",hsk:1,cats:["time"],chars:[{c:"时",p:"shí",z:"ㄕˊ",m:"time"},{c:"候",p:"hou",z:"˙ㄏㄡ",m:"wait"}]},
+{w:"是",p:"shì",z:"ㄕˋ",m:"to be; is",hsk:1,cats:["grammar"],chars:[{c:"是",p:"shì",z:"ㄕˋ",m:"is"}]},
+{w:"书",p:"shū",z:"ㄕㄨ",m:"book",hsk:1,cats:["school","home"],chars:[{c:"书",p:"shū",z:"ㄕㄨ",m:"book"}]},
+{w:"水",p:"shuǐ",z:"ㄕㄨㄟˇ",m:"water",hsk:1,cats:["food","nature"],chars:[{c:"水",p:"shuǐ",z:"ㄕㄨㄟˇ",m:"water"}]},
+{w:"水果",p:"shuǐguǒ",z:"ㄕㄨㄟˇ ㄍㄨㄛˇ",m:"fruit",hsk:1,cats:["food"],chars:[{c:"水",p:"shuǐ",z:"ㄕㄨㄟˇ",m:"water"},{c:"果",p:"guǒ",z:"ㄍㄨㄛˇ",m:"fruit"}]},
+{w:"睡觉",p:"shuìjiào",z:"ㄕㄨㄟˋ ㄐㄧㄠˋ",m:"to sleep",hsk:1,cats:["actions","body"],chars:[{c:"睡",p:"shuì",z:"ㄕㄨㄟˋ",m:"sleep"},{c:"觉",p:"jiào",z:"ㄐㄧㄠˋ",m:"sleep"}]},
+{w:"说",p:"shuō",z:"ㄕㄨㄛ",m:"to speak; to say",hsk:1,cats:["actions","social"],chars:[{c:"说",p:"shuō",z:"ㄕㄨㄛ",m:"say"}]},
+{w:"四",p:"sì",z:"ㄙˋ",m:"four",hsk:1,cats:["time"],chars:[{c:"四",p:"sì",z:"ㄙˋ",m:"four"}]},
+{w:"岁",p:"suì",z:"ㄙㄨㄟˋ",m:"year (of age)",hsk:1,cats:["time","social"],chars:[{c:"岁",p:"suì",z:"ㄙㄨㄟˋ",m:"age"}]},
+{w:"他",p:"tā",z:"ㄊㄚ",m:"he; him",hsk:1,cats:["grammar"],chars:[{c:"他",p:"tā",z:"ㄊㄚ",m:"he"}]},
+{w:"她",p:"tā",z:"ㄊㄚ",m:"she; her",hsk:1,cats:["grammar"],chars:[{c:"她",p:"tā",z:"ㄊㄚ",m:"she"}]},
+{w:"太",p:"tài",z:"ㄊㄞˋ",m:"too; extremely",hsk:1,cats:["grammar"],chars:[{c:"太",p:"tài",z:"ㄊㄞˋ",m:"too"}]},
+{w:"天气",p:"tiānqì",z:"ㄊㄧㄢ ㄑㄧˋ",m:"weather",hsk:1,cats:["nature"],chars:[{c:"天",p:"tiān",z:"ㄊㄧㄢ",m:"sky"},{c:"气",p:"qì",z:"ㄑㄧˋ",m:"air"}]},
+{w:"听",p:"tīng",z:"ㄊㄧㄥ",m:"to listen; to hear",hsk:1,cats:["actions"],chars:[{c:"听",p:"tīng",z:"ㄊㄧㄥ",m:"listen"}]},
+{w:"同学",p:"tóngxué",z:"ㄊㄨㄥˊ ㄒㄩㄝˊ",m:"classmate",hsk:1,cats:["school","social"],chars:[{c:"同",p:"tóng",z:"ㄊㄨㄥˊ",m:"same"},{c:"学",p:"xué",z:"ㄒㄩㄝˊ",m:"study"}]},
+{w:"喂",p:"wèi",z:"ㄨㄟˋ",m:"hello (phone); hey",hsk:1,cats:["social"],chars:[{c:"喂",p:"wèi",z:"ㄨㄟˋ",m:"hello"}]},
+{w:"我",p:"wǒ",z:"ㄨㄛˇ",m:"I; me",hsk:1,cats:["grammar"],chars:[{c:"我",p:"wǒ",z:"ㄨㄛˇ",m:"I"}]},
+{w:"我们",p:"wǒmen",z:"ㄨㄛˇ ˙ㄇㄣ",m:"we; us",hsk:1,cats:["grammar"],chars:[{c:"我",p:"wǒ",z:"ㄨㄛˇ",m:"I"},{c:"们",p:"men",z:"˙ㄇㄣ",m:"(plural)"}]},
+{w:"五",p:"wǔ",z:"ㄨˇ",m:"five",hsk:1,cats:["time"],chars:[{c:"五",p:"wǔ",z:"ㄨˇ",m:"five"}]},
+{w:"下",p:"xià",z:"ㄒㄧㄚˋ",m:"down; below",hsk:1,cats:["grammar","places"],chars:[{c:"下",p:"xià",z:"ㄒㄧㄚˋ",m:"down"}]},
+{w:"下午",p:"xiàwǔ",z:"ㄒㄧㄚˋ ㄨˇ",m:"afternoon",hsk:1,cats:["time"],chars:[{c:"下",p:"xià",z:"ㄒㄧㄚˋ",m:"below"},{c:"午",p:"wǔ",z:"ㄨˇ",m:"noon"}]},
+{w:"下雨",p:"xià yǔ",z:"ㄒㄧㄚˋ ㄩˇ",m:"to rain",hsk:1,cats:["nature"],chars:[{c:"下",p:"xià",z:"ㄒㄧㄚˋ",m:"fall"},{c:"雨",p:"yǔ",z:"ㄩˇ",m:"rain"}]},
+{w:"先生",p:"xiānsheng",z:"ㄒㄧㄢ ˙ㄕㄥ",m:"Mr.; husband; teacher",hsk:1,cats:["social","family"],chars:[{c:"先",p:"xiān",z:"ㄒㄧㄢ",m:"first"},{c:"生",p:"sheng",z:"˙ㄕㄥ",m:"born"}]},
+{w:"现在",p:"xiànzài",z:"ㄒㄧㄢˋ ㄗㄞˋ",m:"now; at the moment",hsk:1,cats:["time","grammar"],chars:[{c:"现",p:"xiàn",z:"ㄒㄧㄢˋ",m:"now"},{c:"在",p:"zài",z:"ㄗㄞˋ",m:"at"}]},
+{w:"想",p:"xiǎng",z:"ㄒㄧㄤˇ",m:"to think; to want; to miss",hsk:1,cats:["emotions","actions"],chars:[{c:"想",p:"xiǎng",z:"ㄒㄧㄤˇ",m:"think"}]},
+{w:"小",p:"xiǎo",z:"ㄒㄧㄠˇ",m:"small; little",hsk:1,cats:["grammar"],chars:[{c:"小",p:"xiǎo",z:"ㄒㄧㄠˇ",m:"small"}]},
+{w:"小姐",p:"xiǎojiě",z:"ㄒㄧㄠˇ ㄐㄧㄝˇ",m:"Miss; young woman",hsk:1,cats:["social","family"],chars:[{c:"小",p:"xiǎo",z:"ㄒㄧㄠˇ",m:"small"},{c:"姐",p:"jiě",z:"ㄐㄧㄝˇ",m:"older sister"}]},
+{w:"写",p:"xiě",z:"ㄒㄧㄝˇ",m:"to write",hsk:1,cats:["actions","school"],chars:[{c:"写",p:"xiě",z:"ㄒㄧㄝˇ",m:"write"}]},
+{w:"谢谢",p:"xièxie",z:"ㄒㄧㄝˋ ˙ㄒㄧㄝ",m:"thank you",hsk:1,cats:["social"],chars:[{c:"谢",p:"xiè",z:"ㄒㄧㄝˋ",m:"thank"},{c:"谢",p:"xie",z:"˙ㄒㄧㄝ",m:"(repeat)"}]},
+{w:"星期",p:"xīngqī",z:"ㄒㄧㄥ ㄑㄧ",m:"week; weekday",hsk:1,cats:["time"],chars:[{c:"星",p:"xīng",z:"ㄒㄧㄥ",m:"star"},{c:"期",p:"qī",z:"ㄑㄧ",m:"period"}]},
+{w:"学生",p:"xuésheng",z:"ㄒㄩㄝˊ ˙ㄕㄥ",m:"student",hsk:1,cats:["school"],chars:[{c:"学",p:"xué",z:"ㄒㄩㄝˊ",m:"learn"},{c:"生",p:"sheng",z:"˙ㄕㄥ",m:"student"}]},
+{w:"学习",p:"xuéxí",z:"ㄒㄩㄝˊ ㄒㄧˊ",m:"to study; to learn",hsk:1,cats:["actions","school"],chars:[{c:"学",p:"xué",z:"ㄒㄩㄝˊ",m:"learn"},{c:"习",p:"xí",z:"ㄒㄧˊ",m:"practice"}]},
+{w:"学校",p:"xuéxiào",z:"ㄒㄩㄝˊ ㄒㄧㄠˋ",m:"school",hsk:1,cats:["school","places"],chars:[{c:"学",p:"xué",z:"ㄒㄩㄝˊ",m:"learn"},{c:"校",p:"xiào",z:"ㄒㄧㄠˋ",m:"school"}]},
+{w:"衣服",p:"yīfu",z:"ㄧ ˙ㄈㄨ",m:"clothes",hsk:1,cats:["clothing"],chars:[{c:"衣",p:"yī",z:"ㄧ",m:"clothes"},{c:"服",p:"fu",z:"˙ㄈㄨ",m:"clothing"}]},
+{w:"医生",p:"yīshēng",z:"ㄧ ㄕㄥ",m:"doctor",hsk:1,cats:["body","work"],chars:[{c:"医",p:"yī",z:"ㄧ",m:"medicine"},{c:"生",p:"shēng",z:"ㄕㄥ",m:"born"}]},
+{w:"医院",p:"yīyuàn",z:"ㄧ ㄩㄢˋ",m:"hospital",hsk:1,cats:["body","places"],chars:[{c:"医",p:"yī",z:"ㄧ",m:"medicine"},{c:"院",p:"yuàn",z:"ㄩㄢˋ",m:"institution"}]},
+{w:"椅子",p:"yǐzi",z:"ㄧˇ ˙ㄗ",m:"chair",hsk:1,cats:["home"],chars:[{c:"椅",p:"yǐ",z:"ㄧˇ",m:"chair"},{c:"子",p:"zi",z:"˙ㄗ",m:"(suffix)"}]},
+{w:"一",p:"yī",z:"ㄧ",m:"one",hsk:1,cats:["time"],chars:[{c:"一",p:"yī",z:"ㄧ",m:"one"}]},
+{w:"一点儿",p:"yīdiǎnr",z:"ㄧ ㄉㄧㄢˇ ㄦ",m:"a little; a bit",hsk:1,cats:["grammar"],chars:[{c:"一",p:"yī",z:"ㄧ",m:"one"},{c:"点",p:"diǎn",z:"ㄉㄧㄢˇ",m:"bit"},{c:"儿",p:"r",z:"ㄦ",m:"(suffix)"}]},
+{w:"有",p:"yǒu",z:"ㄧㄡˇ",m:"to have; there is",hsk:1,cats:["grammar"],chars:[{c:"有",p:"yǒu",z:"ㄧㄡˇ",m:"have"}]},
+{w:"月",p:"yuè",z:"ㄩㄝˋ",m:"month; moon",hsk:1,cats:["time","nature"],chars:[{c:"月",p:"yuè",z:"ㄩㄝˋ",m:"moon; month"}]},
+{w:"在",p:"zài",z:"ㄗㄞˋ",m:"at; in; on",hsk:1,cats:["grammar"],chars:[{c:"在",p:"zài",z:"ㄗㄞˋ",m:"at"}]},
+{w:"再见",p:"zàijiàn",z:"ㄗㄞˋ ㄐㄧㄢˋ",m:"goodbye",hsk:1,cats:["social"],chars:[{c:"再",p:"zài",z:"ㄗㄞˋ",m:"again"},{c:"见",p:"jiàn",z:"ㄐㄧㄢˋ",m:"see"}]},
+{w:"怎么",p:"zěnme",z:"ㄗㄣˇ ˙ㄇㄜ",m:"how; why",hsk:1,cats:["grammar"],chars:[{c:"怎",p:"zěn",z:"ㄗㄣˇ",m:"how"},{c:"么",p:"me",z:"˙ㄇㄜ",m:"(suffix)"}]},
+{w:"怎么样",p:"zěnmeyàng",z:"ㄗㄣˇ ˙ㄇㄜ ㄧㄤˋ",m:"how about; how is it",hsk:1,cats:["grammar","social"],chars:[{c:"怎",p:"zěn",z:"ㄗㄣˇ",m:"how"},{c:"么",p:"me",z:"˙ㄇㄜ",m:"(suffix)"},{c:"样",p:"yàng",z:"ㄧㄤˋ",m:"appearance"}]},
+{w:"这",p:"zhè",z:"ㄓㄜˋ",m:"this",hsk:1,cats:["grammar"],chars:[{c:"这",p:"zhè",z:"ㄓㄜˋ",m:"this"}]},
+{w:"中国",p:"Zhōngguó",z:"ㄓㄨㄥ ㄍㄨㄛˊ",m:"China",hsk:1,cats:["places"],chars:[{c:"中",p:"zhōng",z:"ㄓㄨㄥ",m:"middle"},{c:"国",p:"guó",z:"ㄍㄨㄛˊ",m:"country"}]},
+{w:"中午",p:"zhōngwǔ",z:"ㄓㄨㄥ ㄨˇ",m:"noon; midday",hsk:1,cats:["time"],chars:[{c:"中",p:"zhōng",z:"ㄓㄨㄥ",m:"middle"},{c:"午",p:"wǔ",z:"ㄨˇ",m:"noon"}]},
+{w:"住",p:"zhù",z:"ㄓㄨˋ",m:"to live; to reside",hsk:1,cats:["actions","home"],chars:[{c:"住",p:"zhù",z:"ㄓㄨˋ",m:"live"}]},
+{w:"桌子",p:"zhuōzi",z:"ㄓㄨㄛ ˙ㄗ",m:"table; desk",hsk:1,cats:["home","school"],chars:[{c:"桌",p:"zhuō",z:"ㄓㄨㄛ",m:"table"},{c:"子",p:"zi",z:"˙ㄗ",m:"(suffix)"}]},
+{w:"字",p:"zì",z:"ㄗˋ",m:"character; word",hsk:1,cats:["school","grammar"],chars:[{c:"字",p:"zì",z:"ㄗˋ",m:"character"}]},
+{w:"昨天",p:"zuótiān",z:"ㄗㄨㄛˊ ㄊㄧㄢ",m:"yesterday",hsk:1,cats:["time"],chars:[{c:"昨",p:"zuó",z:"ㄗㄨㄛˊ",m:"yesterday"},{c:"天",p:"tiān",z:"ㄊㄧㄢ",m:"day"}]},
+{w:"坐",p:"zuò",z:"ㄗㄨㄛˋ",m:"to sit; to travel by",hsk:1,cats:["actions","travel"],chars:[{c:"坐",p:"zuò",z:"ㄗㄨㄛˋ",m:"sit"}]},
+{w:"做",p:"zuò",z:"ㄗㄨㄛˋ",m:"to do; to make",hsk:1,cats:["actions"],chars:[{c:"做",p:"zuò",z:"ㄗㄨㄛˋ",m:"do"}]},
+// ── HSK 2 ──
+{w:"白",p:"bái",z:"ㄅㄞˊ",m:"white; bright",hsk:2,cats:["colors"],chars:[{c:"白",p:"bái",z:"ㄅㄞˊ",m:"white"}]},
+{w:"百",p:"bǎi",z:"ㄅㄞˇ",m:"hundred",hsk:2,cats:["time","money"],chars:[{c:"百",p:"bǎi",z:"ㄅㄞˇ",m:"hundred"}]},
+{w:"帮助",p:"bāngzhù",z:"ㄅㄤ ㄓㄨˋ",m:"to help",hsk:2,cats:["actions","social"],chars:[{c:"帮",p:"bāng",z:"ㄅㄤ",m:"help"},{c:"助",p:"zhù",z:"ㄓㄨˋ",m:"assist"}]},
+{w:"报纸",p:"bàozhǐ",z:"ㄅㄠˋ ㄓˇ",m:"newspaper",hsk:2,cats:["home","school"],chars:[{c:"报",p:"bào",z:"ㄅㄠˋ",m:"report"},{c:"纸",p:"zhǐ",z:"ㄓˇ",m:"paper"}]},
+{w:"比较",p:"bǐjiào",z:"ㄅㄧˇ ㄐㄧㄠˋ",m:"to compare; relatively",hsk:2,cats:["grammar"],chars:[{c:"比",p:"bǐ",z:"ㄅㄧˇ",m:"compare"},{c:"较",p:"jiào",z:"ㄐㄧㄠˋ",m:"compare"}]},
+{w:"别",p:"bié",z:"ㄅㄧㄝˊ",m:"don't; other",hsk:2,cats:["grammar"],chars:[{c:"别",p:"bié",z:"ㄅㄧㄝˊ",m:"don't"}]},
+{w:"宾馆",p:"bīnguǎn",z:"ㄅㄧㄣ ㄍㄨㄢˇ",m:"hotel; guest house",hsk:2,cats:["travel","places"],chars:[{c:"宾",p:"bīn",z:"ㄅㄧㄣ",m:"guest"},{c:"馆",p:"guǎn",z:"ㄍㄨㄢˇ",m:"hall"}]},
+{w:"长",p:"cháng",z:"ㄔㄤˊ",m:"long; length",hsk:2,cats:["grammar"],chars:[{c:"长",p:"cháng",z:"ㄔㄤˊ",m:"long"}]},
+{w:"唱歌",p:"chànggē",z:"ㄔㄤˋ ㄍㄜ",m:"to sing",hsk:2,cats:["actions","sports"],chars:[{c:"唱",p:"chàng",z:"ㄔㄤˋ",m:"sing"},{c:"歌",p:"gē",z:"ㄍㄜ",m:"song"}]},
+{w:"出",p:"chū",z:"ㄔㄨ",m:"to go out; to exit",hsk:2,cats:["actions"],chars:[{c:"出",p:"chū",z:"ㄔㄨ",m:"exit"}]},
+{w:"穿",p:"chuān",z:"ㄔㄨㄢ",m:"to wear; to put on",hsk:2,cats:["actions","clothing"],chars:[{c:"穿",p:"chuān",z:"ㄔㄨㄢ",m:"wear"}]},
+{w:"次",p:"cì",z:"ㄘˋ",m:"time; occurrence",hsk:2,cats:["grammar","time"],chars:[{c:"次",p:"cì",z:"ㄘˋ",m:"time"}]},
+{w:"从",p:"cóng",z:"ㄘㄨㄥˊ",m:"from; since",hsk:2,cats:["grammar"],chars:[{c:"从",p:"cóng",z:"ㄘㄨㄥˊ",m:"from"}]},
+{w:"错",p:"cuò",z:"ㄘㄨㄛˋ",m:"wrong; mistake",hsk:2,cats:["grammar","school"],chars:[{c:"错",p:"cuò",z:"ㄘㄨㄛˋ",m:"wrong"}]},
+{w:"打篮球",p:"dǎ lánqiú",z:"ㄉㄚˇ ㄌㄢˊ ㄑㄧㄡˊ",m:"to play basketball",hsk:2,cats:["sports"],chars:[{c:"打",p:"dǎ",z:"ㄉㄚˇ",m:"play"},{c:"篮",p:"lán",z:"ㄌㄢˊ",m:"basket"},{c:"球",p:"qiú",z:"ㄑㄧㄡˊ",m:"ball"}]},
+{w:"但是",p:"dànshì",z:"ㄉㄢˋ ㄕˋ",m:"but; however",hsk:2,cats:["grammar"],chars:[{c:"但",p:"dàn",z:"ㄉㄢˋ",m:"but"},{c:"是",p:"shì",z:"ㄕˋ",m:"is"}]},
+{w:"当然",p:"dāngrán",z:"ㄉㄤ ㄖㄢˊ",m:"of course; certainly",hsk:2,cats:["grammar"],chars:[{c:"当",p:"dāng",z:"ㄉㄤ",m:"should"},{c:"然",p:"rán",z:"ㄖㄢˊ",m:"naturally"}]},
+{w:"地方",p:"dìfang",z:"ㄉㄧˋ ˙ㄈㄤ",m:"place; area",hsk:2,cats:["places"],chars:[{c:"地",p:"dì",z:"ㄉㄧˋ",m:"land"},{c:"方",p:"fang",z:"˙ㄈㄤ",m:"direction"}]},
+{w:"地铁",p:"dìtiě",z:"ㄉㄧˋ ㄊㄧㄝˇ",m:"subway; metro",hsk:2,cats:["travel","places"],chars:[{c:"地",p:"dì",z:"ㄉㄧˋ",m:"ground"},{c:"铁",p:"tiě",z:"ㄊㄧㄝˇ",m:"iron"}]},
+{w:"弟弟",p:"dìdi",z:"ㄉㄧˋ ˙ㄉㄧ",m:"younger brother",hsk:2,cats:["family"],chars:[{c:"弟",p:"dì",z:"ㄉㄧˋ",m:"younger brother"},{c:"弟",p:"di",z:"˙ㄉㄧ",m:"(softer)"}]},
+{w:"懂",p:"dǒng",z:"ㄉㄨㄥˇ",m:"to understand",hsk:2,cats:["actions","emotions"],chars:[{c:"懂",p:"dǒng",z:"ㄉㄨㄥˇ",m:"understand"}]},
+{w:"对",p:"duì",z:"ㄉㄨㄟˋ",m:"correct; right; toward",hsk:2,cats:["grammar"],chars:[{c:"对",p:"duì",z:"ㄉㄨㄟˋ",m:"correct"}]},
+{w:"房间",p:"fángjiān",z:"ㄈㄤˊ ㄐㄧㄢ",m:"room",hsk:2,cats:["home"],chars:[{c:"房",p:"fáng",z:"ㄈㄤˊ",m:"house"},{c:"间",p:"jiān",z:"ㄐㄧㄢ",m:"room"}]},
+{w:"非常",p:"fēicháng",z:"ㄈㄟ ㄔㄤˊ",m:"very; extremely",hsk:2,cats:["grammar"],chars:[{c:"非",p:"fēi",z:"ㄈㄟ",m:"not"},{c:"常",p:"cháng",z:"ㄔㄤˊ",m:"often"}]},
+{w:"服务员",p:"fúwùyuán",z:"ㄈㄨˊ ㄨˋ ㄩㄢˊ",m:"waiter; service staff",hsk:2,cats:["work","food"],chars:[{c:"服",p:"fú",z:"ㄈㄨˊ",m:"serve"},{c:"务",p:"wù",z:"ㄨˋ",m:"duty"},{c:"员",p:"yuán",z:"ㄩㄢˊ",m:"person"}]},
+{w:"告诉",p:"gàosu",z:"ㄍㄠˋ ˙ㄙㄨ",m:"to tell; to inform",hsk:2,cats:["actions","social"],chars:[{c:"告",p:"gào",z:"ㄍㄠˋ",m:"tell"},{c:"诉",p:"su",z:"˙ㄙㄨ",m:"tell"}]},
+{w:"哥哥",p:"gēge",z:"ㄍㄜ ˙ㄍㄜ",m:"older brother",hsk:2,cats:["family"],chars:[{c:"哥",p:"gē",z:"ㄍㄜ",m:"older brother"},{c:"哥",p:"ge",z:"˙ㄍㄜ",m:"(softer)"}]},
+{w:"给",p:"gěi",z:"ㄍㄟˇ",m:"to give; for",hsk:2,cats:["actions","grammar"],chars:[{c:"给",p:"gěi",z:"ㄍㄟˇ",m:"give"}]},
+{w:"公共汽车",p:"gōnggòng qìchē",z:"ㄍㄨㄥ ㄍㄨㄥˋ ㄑㄧˋ ㄔㄜ",m:"public bus",hsk:2,cats:["travel"],chars:[{c:"公",p:"gōng",z:"ㄍㄨㄥ",m:"public"},{c:"共",p:"gòng",z:"ㄍㄨㄥˋ",m:"shared"},{c:"汽",p:"qì",z:"ㄑㄧˋ",m:"steam"},{c:"车",p:"chē",z:"ㄔㄜ",m:"vehicle"}]},
+{w:"公司",p:"gōngsī",z:"ㄍㄨㄥ ㄙ",m:"company; firm",hsk:2,cats:["work","places"],chars:[{c:"公",p:"gōng",z:"ㄍㄨㄥ",m:"public"},{c:"司",p:"sī",z:"ㄙ",m:"manage"}]},
+{w:"贵",p:"guì",z:"ㄍㄨㄟˋ",m:"expensive; precious",hsk:2,cats:["money"],chars:[{c:"贵",p:"guì",z:"ㄍㄨㄟˋ",m:"expensive"}]},
+{w:"过",p:"guò",z:"ㄍㄨㄛˋ",m:"to pass; to cross",hsk:2,cats:["actions","grammar"],chars:[{c:"过",p:"guò",z:"ㄍㄨㄛˋ",m:"pass"}]},
+{w:"还",p:"hái",z:"ㄏㄞˊ",m:"still; yet; also",hsk:2,cats:["grammar"],chars:[{c:"还",p:"hái",z:"ㄏㄞˊ",m:"still"}]},
+{w:"孩子",p:"háizi",z:"ㄏㄞˊ ˙ㄗ",m:"child; children",hsk:2,cats:["family"],chars:[{c:"孩",p:"hái",z:"ㄏㄞˊ",m:"child"},{c:"子",p:"zi",z:"˙ㄗ",m:"(suffix)"}]},
+{w:"黑",p:"hēi",z:"ㄏㄟ",m:"black; dark",hsk:2,cats:["colors"],chars:[{c:"黑",p:"hēi",z:"ㄏㄟ",m:"black"}]},
+{w:"红",p:"hóng",z:"ㄏㄨㄥˊ",m:"red",hsk:2,cats:["colors"],chars:[{c:"红",p:"hóng",z:"ㄏㄨㄥˊ",m:"red"}]},
+{w:"火车站",p:"huǒchēzhàn",z:"ㄏㄨㄛˇ ㄔㄜ ㄓㄢˋ",m:"train station",hsk:2,cats:["travel","places"],chars:[{c:"火",p:"huǒ",z:"ㄏㄨㄛˇ",m:"fire"},{c:"车",p:"chē",z:"ㄔㄜ",m:"vehicle"},{c:"站",p:"zhàn",z:"ㄓㄢˋ",m:"station"}]},
+{w:"机场",p:"jīchǎng",z:"ㄐㄧ ㄔㄤˇ",m:"airport",hsk:2,cats:["travel","places"],chars:[{c:"机",p:"jī",z:"ㄐㄧ",m:"aircraft"},{c:"场",p:"chǎng",z:"ㄔㄤˇ",m:"field"}]},
+{w:"鸡蛋",p:"jīdàn",z:"ㄐㄧ ㄉㄢˋ",m:"egg",hsk:2,cats:["food","kitchen"],chars:[{c:"鸡",p:"jī",z:"ㄐㄧ",m:"chicken"},{c:"蛋",p:"dàn",z:"ㄉㄢˋ",m:"egg"}]},
+{w:"教室",p:"jiàoshì",z:"ㄐㄧㄠˋ ㄕˋ",m:"classroom",hsk:2,cats:["school","places"],chars:[{c:"教",p:"jiào",z:"ㄐㄧㄠˋ",m:"teach"},{c:"室",p:"shì",z:"ㄕˋ",m:"room"}]},
+{w:"姐姐",p:"jiějie",z:"ㄐㄧㄝˇ ˙ㄐㄧㄝ",m:"older sister",hsk:2,cats:["family"],chars:[{c:"姐",p:"jiě",z:"ㄐㄧㄝˇ",m:"older sister"},{c:"姐",p:"jie",z:"˙ㄐㄧㄝ",m:"(softer)"}]},
+{w:"介绍",p:"jièshào",z:"ㄐㄧㄝˋ ㄕㄠˋ",m:"to introduce",hsk:2,cats:["actions","social"],chars:[{c:"介",p:"jiè",z:"ㄐㄧㄝˋ",m:"between"},{c:"绍",p:"shào",z:"ㄕㄠˋ",m:"introduce"}]},
+{w:"进",p:"jìn",z:"ㄐㄧㄣˋ",m:"to enter; to advance",hsk:2,cats:["actions"],chars:[{c:"进",p:"jìn",z:"ㄐㄧㄣˋ",m:"enter"}]},
+{w:"近",p:"jìn",z:"ㄐㄧㄣˋ",m:"near; close",hsk:2,cats:["grammar"],chars:[{c:"近",p:"jìn",z:"ㄐㄧㄣˋ",m:"near"}]},
+{w:"就",p:"jiù",z:"ㄐㄧㄡˋ",m:"just; exactly",hsk:2,cats:["grammar"],chars:[{c:"就",p:"jiù",z:"ㄐㄧㄡˋ",m:"just"}]},
+{w:"觉得",p:"juéde",z:"ㄐㄩㄝˊ ˙ㄉㄜ",m:"to feel; to think",hsk:2,cats:["emotions","actions"],chars:[{c:"觉",p:"jué",z:"ㄐㄩㄝˊ",m:"feel"},{c:"得",p:"de",z:"˙ㄉㄜ",m:"(particle)"}]},
+{w:"咖啡",p:"kāfēi",z:"ㄎㄚ ㄈㄟ",m:"coffee",hsk:2,cats:["food"],chars:[{c:"咖",p:"kā",z:"ㄎㄚ",m:"(trans.)"},{c:"啡",p:"fēi",z:"ㄈㄟ",m:"(trans.)"}]},
+{w:"开始",p:"kāishǐ",z:"ㄎㄞ ㄕˇ",m:"to begin; to start",hsk:2,cats:["actions"],chars:[{c:"开",p:"kāi",z:"ㄎㄞ",m:"open"},{c:"始",p:"shǐ",z:"ㄕˇ",m:"begin"}]},
+{w:"考试",p:"kǎoshì",z:"ㄎㄠˇ ㄕˋ",m:"exam; to take an exam",hsk:2,cats:["school"],chars:[{c:"考",p:"kǎo",z:"ㄎㄠˇ",m:"test"},{c:"试",p:"shì",z:"ㄕˋ",m:"try"}]},
+{w:"可能",p:"kěnéng",z:"ㄎㄜˇ ㄋㄥˊ",m:"possible; perhaps",hsk:2,cats:["grammar"],chars:[{c:"可",p:"kě",z:"ㄎㄜˇ",m:"can"},{c:"能",p:"néng",z:"ㄋㄥˊ",m:"ability"}]},
+{w:"可以",p:"kěyǐ",z:"ㄎㄜˇ ㄧˇ",m:"can; may; okay",hsk:2,cats:["grammar"],chars:[{c:"可",p:"kě",z:"ㄎㄜˇ",m:"can"},{c:"以",p:"yǐ",z:"ㄧˇ",m:"by"}]},
+{w:"快",p:"kuài",z:"ㄎㄨㄞˋ",m:"fast; quick; soon",hsk:2,cats:["grammar"],chars:[{c:"快",p:"kuài",z:"ㄎㄨㄞˋ",m:"fast"}]},
+{w:"快乐",p:"kuàilè",z:"ㄎㄨㄞˋ ㄌㄜˋ",m:"happy; joyful",hsk:2,cats:["emotions"],chars:[{c:"快",p:"kuài",z:"ㄎㄨㄞˋ",m:"joyful"},{c:"乐",p:"lè",z:"ㄌㄜˋ",m:"joy"}]},
+{w:"累",p:"lèi",z:"ㄌㄟˋ",m:"tired; fatigued",hsk:2,cats:["body","emotions"],chars:[{c:"累",p:"lèi",z:"ㄌㄟˋ",m:"tired"}]},
+{w:"离",p:"lí",z:"ㄌㄧˊ",m:"away from; to leave",hsk:2,cats:["grammar"],chars:[{c:"离",p:"lí",z:"ㄌㄧˊ",m:"leave"}]},
+{w:"脸",p:"liǎn",z:"ㄌㄧㄢˇ",m:"face",hsk:2,cats:["body"],chars:[{c:"脸",p:"liǎn",z:"ㄌㄧㄢˇ",m:"face"}]},
+{w:"两",p:"liǎng",z:"ㄌㄧㄤˇ",m:"two (measure word)",hsk:2,cats:["grammar","time"],chars:[{c:"两",p:"liǎng",z:"ㄌㄧㄤˇ",m:"two"}]},
+{w:"路",p:"lù",z:"ㄌㄨˋ",m:"road; way; route",hsk:2,cats:["places","travel"],chars:[{c:"路",p:"lù",z:"ㄌㄨˋ",m:"road"}]},
+{w:"绿",p:"lǜ",z:"ㄌㄩˋ",m:"green",hsk:2,cats:["colors","nature"],chars:[{c:"绿",p:"lǜ",z:"ㄌㄩˋ",m:"green"}]},
+{w:"卖",p:"mài",z:"ㄇㄞˋ",m:"to sell",hsk:2,cats:["actions","money"],chars:[{c:"卖",p:"mài",z:"ㄇㄞˋ",m:"sell"}]},
+{w:"慢",p:"màn",z:"ㄇㄢˋ",m:"slow",hsk:2,cats:["grammar"],chars:[{c:"慢",p:"màn",z:"ㄇㄢˋ",m:"slow"}]},
+{w:"忙",p:"máng",z:"ㄇㄤˊ",m:"busy",hsk:2,cats:["work","emotions"],chars:[{c:"忙",p:"máng",z:"ㄇㄤˊ",m:"busy"}]},
+{w:"每",p:"měi",z:"ㄇㄟˇ",m:"every; each",hsk:2,cats:["grammar","time"],chars:[{c:"每",p:"měi",z:"ㄇㄟˇ",m:"every"}]},
+{w:"妹妹",p:"mèimei",z:"ㄇㄟˋ ˙ㄇㄟ",m:"younger sister",hsk:2,cats:["family"],chars:[{c:"妹",p:"mèi",z:"ㄇㄟˋ",m:"younger sister"},{c:"妹",p:"mei",z:"˙ㄇㄟ",m:"(softer)"}]},
+{w:"男",p:"nán",z:"ㄋㄢˊ",m:"male; man",hsk:2,cats:["family","grammar"],chars:[{c:"男",p:"nán",z:"ㄋㄢˊ",m:"male"}]},
+{w:"您",p:"nín",z:"ㄋㄧㄣˊ",m:"you (polite)",hsk:2,cats:["grammar","social"],chars:[{c:"您",p:"nín",z:"ㄋㄧㄣˊ",m:"you (polite)"}]},
+{w:"牛奶",p:"niúnǎi",z:"ㄋㄧㄡˊ ㄋㄞˇ",m:"milk",hsk:2,cats:["food"],chars:[{c:"牛",p:"niú",z:"ㄋㄧㄡˊ",m:"cow"},{c:"奶",p:"nǎi",z:"ㄋㄞˇ",m:"milk"}]},
+{w:"女",p:"nǚ",z:"ㄋㄩˇ",m:"female; woman",hsk:2,cats:["family","grammar"],chars:[{c:"女",p:"nǚ",z:"ㄋㄩˇ",m:"female"}]},
+{w:"旁边",p:"pángbiān",z:"ㄆㄤˊ ㄅㄧㄢ",m:"beside; next to",hsk:2,cats:["places"],chars:[{c:"旁",p:"páng",z:"ㄆㄤˊ",m:"side"},{c:"边",p:"biān",z:"ㄅㄧㄢ",m:"side"}]},
+{w:"跑步",p:"pǎobù",z:"ㄆㄠˇ ㄅㄨˋ",m:"to jog; to run",hsk:2,cats:["sports","actions"],chars:[{c:"跑",p:"pǎo",z:"ㄆㄠˇ",m:"run"},{c:"步",p:"bù",z:"ㄅㄨˋ",m:"step"}]},
+{w:"便宜",p:"piányí",z:"ㄆㄧㄢˊ ㄧˊ",m:"cheap; inexpensive",hsk:2,cats:["money"],chars:[{c:"便",p:"pián",z:"ㄆㄧㄢˊ",m:"cheap"},{c:"宜",p:"yí",z:"ㄧˊ",m:"suitable"}]},
+{w:"票",p:"piào",z:"ㄆㄧㄠˋ",m:"ticket",hsk:2,cats:["travel","money"],chars:[{c:"票",p:"piào",z:"ㄆㄧㄠˋ",m:"ticket"}]},
+{w:"起床",p:"qǐchuáng",z:"ㄑㄧˇ ㄔㄨㄤˊ",m:"to get up out of bed",hsk:2,cats:["actions","body"],chars:[{c:"起",p:"qǐ",z:"ㄑㄧˇ",m:"rise"},{c:"床",p:"chuáng",z:"ㄔㄨㄤˊ",m:"bed"}]},
+{w:"然后",p:"ránhòu",z:"ㄖㄢˊ ㄏㄡˋ",m:"then; after that",hsk:2,cats:["grammar"],chars:[{c:"然",p:"rán",z:"ㄖㄢˊ",m:"naturally"},{c:"后",p:"hòu",z:"ㄏㄡˋ",m:"after"}]},
+{w:"让",p:"ràng",z:"ㄖㄤˋ",m:"to let; to allow",hsk:2,cats:["actions","grammar"],chars:[{c:"让",p:"ràng",z:"ㄖㄤˋ",m:"let"}]},
+{w:"身体",p:"shēntǐ",z:"ㄕㄣ ㄊㄧˇ",m:"body; health",hsk:2,cats:["body"],chars:[{c:"身",p:"shēn",z:"ㄕㄣ",m:"body"},{c:"体",p:"tǐ",z:"ㄊㄧˇ",m:"body"}]},
+{w:"生病",p:"shēngbìng",z:"ㄕㄥ ㄅㄧㄥˋ",m:"to get sick",hsk:2,cats:["body"],chars:[{c:"生",p:"shēng",z:"ㄕㄥ",m:"life"},{c:"病",p:"bìng",z:"ㄅㄧㄥˋ",m:"illness"}]},
+{w:"时间",p:"shíjiān",z:"ㄕˊ ㄐㄧㄢ",m:"time; period",hsk:2,cats:["time"],chars:[{c:"时",p:"shí",z:"ㄕˊ",m:"time"},{c:"间",p:"jiān",z:"ㄐㄧㄢ",m:"between"}]},
+{w:"事情",p:"shìqíng",z:"ㄕˋ ㄑㄧㄥˊ",m:"matter; affair",hsk:2,cats:["grammar"],chars:[{c:"事",p:"shì",z:"ㄕˋ",m:"matter"},{c:"情",p:"qíng",z:"ㄑㄧㄥˊ",m:"feeling"}]},
+{w:"手表",p:"shǒubiǎo",z:"ㄕㄡˇ ㄅㄧㄠˇ",m:"wristwatch",hsk:2,cats:["home","clothing"],chars:[{c:"手",p:"shǒu",z:"ㄕㄡˇ",m:"hand"},{c:"表",p:"biǎo",z:"ㄅㄧㄠˇ",m:"watch"}]},
+{w:"手机",p:"shǒujī",z:"ㄕㄡˇ ㄐㄧ",m:"mobile phone",hsk:2,cats:["tech","home"],chars:[{c:"手",p:"shǒu",z:"ㄕㄡˇ",m:"hand"},{c:"机",p:"jī",z:"ㄐㄧ",m:"machine"}]},
+{w:"所以",p:"suǒyǐ",z:"ㄙㄨㄛˇ ㄧˇ",m:"so; therefore",hsk:2,cats:["grammar"],chars:[{c:"所",p:"suǒ",z:"ㄙㄨㄛˇ",m:"place"},{c:"以",p:"yǐ",z:"ㄧˇ",m:"because"}]},
+{w:"踢足球",p:"tī zúqiú",z:"ㄊㄧ ㄗㄨˊ ㄑㄧㄡˊ",m:"to play soccer",hsk:2,cats:["sports"],chars:[{c:"踢",p:"tī",z:"ㄊㄧ",m:"kick"},{c:"足",p:"zú",z:"ㄗㄨˊ",m:"foot"},{c:"球",p:"qiú",z:"ㄑㄧㄡˊ",m:"ball"}]},
+{w:"跳舞",p:"tiàowǔ",z:"ㄊㄧㄠˋ ㄨˇ",m:"to dance",hsk:2,cats:["sports","actions"],chars:[{c:"跳",p:"tiào",z:"ㄊㄧㄠˋ",m:"jump"},{c:"舞",p:"wǔ",z:"ㄨˇ",m:"dance"}]},
+{w:"外",p:"wài",z:"ㄨㄞˋ",m:"outside; foreign",hsk:2,cats:["grammar","places"],chars:[{c:"外",p:"wài",z:"ㄨㄞˋ",m:"outside"}]},
+{w:"完",p:"wán",z:"ㄨㄢˊ",m:"to finish; done",hsk:2,cats:["actions"],chars:[{c:"完",p:"wán",z:"ㄨㄢˊ",m:"finish"}]},
+{w:"玩",p:"wán",z:"ㄨㄢˊ",m:"to play; to have fun",hsk:2,cats:["actions","sports"],chars:[{c:"玩",p:"wán",z:"ㄨㄢˊ",m:"play"}]},
+{w:"晚上",p:"wǎnshang",z:"ㄨㄢˇ ˙ㄕㄤ",m:"evening; night",hsk:2,cats:["time"],chars:[{c:"晚",p:"wǎn",z:"ㄨㄢˇ",m:"evening"},{c:"上",p:"shang",z:"˙ㄕㄤ",m:"(suffix)"}]},
+{w:"问",p:"wèn",z:"ㄨㄣˋ",m:"to ask; to inquire",hsk:2,cats:["actions","social"],chars:[{c:"问",p:"wèn",z:"ㄨㄣˋ",m:"ask"}]},
+{w:"问题",p:"wèntí",z:"ㄨㄣˋ ㄊㄧˊ",m:"question; problem",hsk:2,cats:["school","grammar"],chars:[{c:"问",p:"wèn",z:"ㄨㄣˋ",m:"ask"},{c:"题",p:"tí",z:"ㄊㄧˊ",m:"topic"}]},
+{w:"西瓜",p:"xīguā",z:"ㄒㄧ ㄍㄨㄚ",m:"watermelon",hsk:2,cats:["food"],chars:[{c:"西",p:"xī",z:"ㄒㄧ",m:"west"},{c:"瓜",p:"guā",z:"ㄍㄨㄚ",m:"melon"}]},
+{w:"希望",p:"xīwàng",z:"ㄒㄧ ㄨㄤˋ",m:"to hope; hope",hsk:2,cats:["emotions","actions"],chars:[{c:"希",p:"xī",z:"ㄒㄧ",m:"hope"},{c:"望",p:"wàng",z:"ㄨㄤˋ",m:"hope"}]},
+{w:"洗",p:"xǐ",z:"ㄒㄧˇ",m:"to wash",hsk:2,cats:["actions","home","kitchen"],chars:[{c:"洗",p:"xǐ",z:"ㄒㄧˇ",m:"wash"}]},
+{w:"小时",p:"xiǎoshí",z:"ㄒㄧㄠˇ ㄕˊ",m:"hour",hsk:2,cats:["time"],chars:[{c:"小",p:"xiǎo",z:"ㄒㄧㄠˇ",m:"small"},{c:"时",p:"shí",z:"ㄕˊ",m:"hour"}]},
+{w:"笑",p:"xiào",z:"ㄒㄧㄠˋ",m:"to laugh; to smile",hsk:2,cats:["actions","emotions"],chars:[{c:"笑",p:"xiào",z:"ㄒㄧㄠˋ",m:"laugh"}]},
+{w:"新",p:"xīn",z:"ㄒㄧㄣ",m:"new",hsk:2,cats:["grammar"],chars:[{c:"新",p:"xīn",z:"ㄒㄧㄣ",m:"new"}]},
+{w:"雪",p:"xuě",z:"ㄒㄩㄝˇ",m:"snow",hsk:2,cats:["nature"],chars:[{c:"雪",p:"xuě",z:"ㄒㄩㄝˇ",m:"snow"}]},
+{w:"颜色",p:"yánsè",z:"ㄧㄢˊ ㄙㄜˋ",m:"color",hsk:2,cats:["colors"],chars:[{c:"颜",p:"yán",z:"ㄧㄢˊ",m:"color"},{c:"色",p:"sè",z:"ㄙㄜˋ",m:"color"}]},
+{w:"要",p:"yào",z:"ㄧㄠˋ",m:"to want; to need; will",hsk:2,cats:["grammar"],chars:[{c:"要",p:"yào",z:"ㄧㄠˋ",m:"want"}]},
+{w:"也",p:"yě",z:"ㄧㄝˇ",m:"also; too",hsk:2,cats:["grammar"],chars:[{c:"也",p:"yě",z:"ㄧㄝˇ",m:"also"}]},
+{w:"一起",p:"yīqǐ",z:"ㄧ ㄑㄧˇ",m:"together",hsk:2,cats:["grammar"],chars:[{c:"一",p:"yī",z:"ㄧ",m:"one"},{c:"起",p:"qǐ",z:"ㄑㄧˇ",m:"together"}]},
+{w:"因为",p:"yīnwèi",z:"ㄧㄣ ㄨㄟˋ",m:"because; since",hsk:2,cats:["grammar"],chars:[{c:"因",p:"yīn",z:"ㄧㄣ",m:"cause"},{c:"为",p:"wèi",z:"ㄨㄟˋ",m:"for"}]},
+{w:"游泳",p:"yóuyǒng",z:"ㄧㄡˊ ㄩㄥˇ",m:"to swim; swimming",hsk:2,cats:["sports"],chars:[{c:"游",p:"yóu",z:"ㄧㄡˊ",m:"swim"},{c:"泳",p:"yǒng",z:"ㄩㄥˇ",m:"swim"}]},
+{w:"鱼",p:"yú",z:"ㄩˊ",m:"fish",hsk:2,cats:["food","animals"],chars:[{c:"鱼",p:"yú",z:"ㄩˊ",m:"fish"}]},
+{w:"远",p:"yuǎn",z:"ㄩㄢˇ",m:"far; distant",hsk:2,cats:["grammar"],chars:[{c:"远",p:"yuǎn",z:"ㄩㄢˇ",m:"far"}]},
+{w:"运动",p:"yùndòng",z:"ㄩㄣˋ ㄉㄨㄥˋ",m:"sport; exercise",hsk:2,cats:["sports"],chars:[{c:"运",p:"yùn",z:"ㄩㄣˋ",m:"transport"},{c:"动",p:"dòng",z:"ㄉㄨㄥˋ",m:"move"}]},
+{w:"再",p:"zài",z:"ㄗㄞˋ",m:"again; once more",hsk:2,cats:["grammar"],chars:[{c:"再",p:"zài",z:"ㄗㄞˋ",m:"again"}]},
+{w:"早上",p:"zǎoshang",z:"ㄗㄠˇ ˙ㄕㄤ",m:"morning (early)",hsk:2,cats:["time"],chars:[{c:"早",p:"zǎo",z:"ㄗㄠˇ",m:"early"},{c:"上",p:"shang",z:"˙ㄕㄤ",m:"(suffix)"}]},
+{w:"丈夫",p:"zhàngfu",z:"ㄓㄤˋ ˙ㄈㄨ",m:"husband",hsk:2,cats:["family"],chars:[{c:"丈",p:"zhàng",z:"ㄓㄤˋ",m:"husband"},{c:"夫",p:"fu",z:"˙ㄈㄨ",m:"man"}]},
+{w:"找",p:"zhǎo",z:"ㄓㄠˇ",m:"to look for; to find",hsk:2,cats:["actions"],chars:[{c:"找",p:"zhǎo",z:"ㄓㄠˇ",m:"look for"}]},
+{w:"知道",p:"zhīdào",z:"ㄓ ㄉㄠˋ",m:"to know; to be aware of",hsk:2,cats:["actions","grammar"],chars:[{c:"知",p:"zhī",z:"ㄓ",m:"know"},{c:"道",p:"dào",z:"ㄉㄠˋ",m:"way"}]},
+{w:"准备",p:"zhǔnbèi",z:"ㄓㄨㄣˇ ㄅㄟˋ",m:"to prepare",hsk:2,cats:["actions"],chars:[{c:"准",p:"zhǔn",z:"ㄓㄨㄣˇ",m:"accurate"},{c:"备",p:"bèi",z:"ㄅㄟˋ",m:"prepare"}]},
+{w:"自行车",p:"zìxíngchē",z:"ㄗˋ ㄒㄧㄥˊ ㄔㄜ",m:"bicycle",hsk:2,cats:["travel","sports"],chars:[{c:"自",p:"zì",z:"ㄗˋ",m:"self"},{c:"行",p:"xíng",z:"ㄒㄧㄥˊ",m:"walk"},{c:"车",p:"chē",z:"ㄔㄜ",m:"vehicle"}]},
+{w:"走",p:"zǒu",z:"ㄗㄡˇ",m:"to walk; to go",hsk:2,cats:["actions"],chars:[{c:"走",p:"zǒu",z:"ㄗㄡˇ",m:"walk"}]},
+{w:"最",p:"zuì",z:"ㄗㄨㄟˋ",m:"most; -est (superlative)",hsk:2,cats:["grammar"],chars:[{c:"最",p:"zuì",z:"ㄗㄨㄟˋ",m:"most"}]},
+{w:"左边",p:"zuǒbiān",z:"ㄗㄨㄛˇ ㄅㄧㄢ",m:"left side",hsk:2,cats:["places"],chars:[{c:"左",p:"zuǒ",z:"ㄗㄨㄛˇ",m:"left"},{c:"边",p:"biān",z:"ㄅㄧㄢ",m:"side"}]},
+{w:"右边",p:"yòubiān",z:"ㄧㄡˋ ㄅㄧㄢ",m:"right side",hsk:2,cats:["places"],chars:[{c:"右",p:"yòu",z:"ㄧㄡˋ",m:"right"},{c:"边",p:"biān",z:"ㄅㄧㄢ",m:"side"}]},
+// ── HSK 3 ──
+{w:"变化",p:"biànhuà",z:"ㄅㄧㄢˋ ㄏㄨㄚˋ",m:"change; transformation",hsk:3,cats:["grammar"],chars:[{c:"变",p:"biàn",z:"ㄅㄧㄢˋ",m:"change"},{c:"化",p:"huà",z:"ㄏㄨㄚˋ",m:"transform"}]},
+{w:"差",p:"chà",z:"ㄔㄚˋ",m:"poor; bad; to differ",hsk:3,cats:["grammar"],chars:[{c:"差",p:"chà",z:"ㄔㄚˋ",m:"differ"}]},
+{w:"超市",p:"chāoshì",z:"ㄔㄠ ㄕˋ",m:"supermarket",hsk:3,cats:["places","money"],chars:[{c:"超",p:"chāo",z:"ㄔㄠ",m:"exceed"},{c:"市",p:"shì",z:"ㄕˋ",m:"market"}]},
+{w:"成绩",p:"chéngjì",z:"ㄔㄥˊ ㄐㄧˋ",m:"grade; score; achievement",hsk:3,cats:["school"],chars:[{c:"成",p:"chéng",z:"ㄔㄥˊ",m:"achieve"},{c:"绩",p:"jì",z:"ㄐㄧˋ",m:"merit"}]},
+{w:"城市",p:"chéngshì",z:"ㄔㄥˊ ㄕˋ",m:"city; town",hsk:3,cats:["places"],chars:[{c:"城",p:"chéng",z:"ㄔㄥˊ",m:"city"},{c:"市",p:"shì",z:"ㄕˋ",m:"city"}]},
+{w:"除了",p:"chúle",z:"ㄔㄨˊ ˙ㄌㄜ",m:"besides; except for",hsk:3,cats:["grammar"],chars:[{c:"除",p:"chú",z:"ㄔㄨˊ",m:"except"},{c:"了",p:"le",z:"˙ㄌㄜ",m:"(particle)"}]},
+{w:"词典",p:"cídiǎn",z:"ㄘˊ ㄉㄧㄢˇ",m:"dictionary",hsk:3,cats:["school"],chars:[{c:"词",p:"cí",z:"ㄘˊ",m:"word"},{c:"典",p:"diǎn",z:"ㄉㄧㄢˇ",m:"dictionary"}]},
+{w:"聪明",p:"cōngmíng",z:"ㄘㄨㄥ ㄇㄧㄥˊ",m:"clever; intelligent",hsk:3,cats:["emotions","school"],chars:[{c:"聪",p:"cōng",z:"ㄘㄨㄥ",m:"clever"},{c:"明",p:"míng",z:"ㄇㄧㄥˊ",m:"bright"}]},
+{w:"打算",p:"dǎsuàn",z:"ㄉㄚˇ ㄙㄨㄢˋ",m:"to plan; to intend",hsk:3,cats:["actions","grammar"],chars:[{c:"打",p:"dǎ",z:"ㄉㄚˇ",m:"make"},{c:"算",p:"suàn",z:"ㄙㄨㄢˋ",m:"plan"}]},
+{w:"带",p:"dài",z:"ㄉㄞˋ",m:"to take; to bring; belt",hsk:3,cats:["actions"],chars:[{c:"带",p:"dài",z:"ㄉㄞˋ",m:"bring"}]},
+{w:"担心",p:"dānxīn",z:"ㄉㄢ ㄒㄧㄣ",m:"to worry",hsk:3,cats:["emotions"],chars:[{c:"担",p:"dān",z:"ㄉㄢ",m:"carry"},{c:"心",p:"xīn",z:"ㄒㄧㄣ",m:"heart"}]},
+{w:"蛋糕",p:"dàngāo",z:"ㄉㄢˋ ㄍㄠ",m:"cake",hsk:3,cats:["food","kitchen"],chars:[{c:"蛋",p:"dàn",z:"ㄉㄢˋ",m:"egg"},{c:"糕",p:"gāo",z:"ㄍㄠ",m:"cake"}]},
+{w:"低",p:"dī",z:"ㄉㄧ",m:"low; to lower",hsk:3,cats:["grammar"],chars:[{c:"低",p:"dī",z:"ㄉㄧ",m:"low"}]},
+{w:"地图",p:"dìtú",z:"ㄉㄧˋ ㄊㄨˊ",m:"map",hsk:3,cats:["travel","places"],chars:[{c:"地",p:"dì",z:"ㄉㄧˋ",m:"land"},{c:"图",p:"tú",z:"ㄊㄨˊ",m:"map"}]},
+{w:"电梯",p:"diàntī",z:"ㄉㄧㄢˋ ㄊㄧ",m:"elevator; lift",hsk:3,cats:["home","places"],chars:[{c:"电",p:"diàn",z:"ㄉㄧㄢˋ",m:"electricity"},{c:"梯",p:"tī",z:"ㄊㄧ",m:"ladder"}]},
+{w:"锻炼",p:"duànliàn",z:"ㄉㄨㄢˋ ㄌㄧㄢˋ",m:"to exercise; workout",hsk:3,cats:["sports","actions","body"],chars:[{c:"锻",p:"duàn",z:"ㄉㄨㄢˋ",m:"forge"},{c:"炼",p:"liàn",z:"ㄌㄧㄢˋ",m:"temper"}]},
+{w:"而且",p:"érqiě",z:"ㄦˊ ㄑㄧㄝˇ",m:"and; moreover; furthermore",hsk:3,cats:["grammar"],chars:[{c:"而",p:"ér",z:"ㄦˊ",m:"and"},{c:"且",p:"qiě",z:"ㄑㄧㄝˇ",m:"moreover"}]},
+{w:"发现",p:"fāxiàn",z:"ㄈㄚ ㄒㄧㄢˋ",m:"to discover; to find",hsk:3,cats:["actions"],chars:[{c:"发",p:"fā",z:"ㄈㄚ",m:"emit"},{c:"现",p:"xiàn",z:"ㄒㄧㄢˋ",m:"appear"}]},
+{w:"方便",p:"fāngbiàn",z:"ㄈㄤ ㄅㄧㄢˋ",m:"convenient; handy",hsk:3,cats:["grammar"],chars:[{c:"方",p:"fāng",z:"ㄈㄤ",m:"direction"},{c:"便",p:"biàn",z:"ㄅㄧㄢˋ",m:"convenient"}]},
+{w:"放",p:"fàng",z:"ㄈㄤˋ",m:"to put; to release",hsk:3,cats:["actions","kitchen"],chars:[{c:"放",p:"fàng",z:"ㄈㄤˋ",m:"put"}]},
+{w:"放心",p:"fàngxīn",z:"ㄈㄤˋ ㄒㄧㄣ",m:"to rest assured",hsk:3,cats:["emotions"],chars:[{c:"放",p:"fàng",z:"ㄈㄤˋ",m:"let go"},{c:"心",p:"xīn",z:"ㄒㄧㄣ",m:"heart"}]},
+{w:"风",p:"fēng",z:"ㄈㄥ",m:"wind; style",hsk:3,cats:["nature"],chars:[{c:"风",p:"fēng",z:"ㄈㄥ",m:"wind"}]},
+{w:"复习",p:"fùxí",z:"ㄈㄨˋ ㄒㄧˊ",m:"to review; to revise",hsk:3,cats:["school","actions"],chars:[{c:"复",p:"fù",z:"ㄈㄨˋ",m:"repeat"},{c:"习",p:"xí",z:"ㄒㄧˊ",m:"practice"}]},
+{w:"刚才",p:"gāngcái",z:"ㄍㄤ ㄘㄞˊ",m:"just now; a moment ago",hsk:3,cats:["time"],chars:[{c:"刚",p:"gāng",z:"ㄍㄤ",m:"just"},{c:"才",p:"cái",z:"ㄘㄞˊ",m:"just"}]},
+{w:"跟",p:"gēn",z:"ㄍㄣ",m:"with; and; to follow",hsk:3,cats:["grammar"],chars:[{c:"跟",p:"gēn",z:"ㄍㄣ",m:"follow"}]},
+{w:"更",p:"gèng",z:"ㄍㄥˋ",m:"even more; further",hsk:3,cats:["grammar"],chars:[{c:"更",p:"gèng",z:"ㄍㄥˋ",m:"even more"}]},
+{w:"故事",p:"gùshi",z:"ㄍㄨˋ ˙ㄕ",m:"story; tale",hsk:3,cats:["school","social"],chars:[{c:"故",p:"gù",z:"ㄍㄨˋ",m:"reason"},{c:"事",p:"shi",z:"˙ㄕ",m:"matter"}]},
+{w:"关系",p:"guānxi",z:"ㄍㄨㄢ ˙ㄒㄧ",m:"relationship; connection",hsk:3,cats:["social","grammar"],chars:[{c:"关",p:"guān",z:"ㄍㄨㄢ",m:"relate"},{c:"系",p:"xi",z:"˙ㄒㄧ",m:"connect"}]},
+{w:"关心",p:"guānxīn",z:"ㄍㄨㄢ ㄒㄧㄣ",m:"to care for; concern",hsk:3,cats:["emotions","social"],chars:[{c:"关",p:"guān",z:"ㄍㄨㄢ",m:"concern"},{c:"心",p:"xīn",z:"ㄒㄧㄣ",m:"heart"}]},
+{w:"过去",p:"guòqù",z:"ㄍㄨㄛˋ ㄑㄩˋ",m:"past; to go over",hsk:3,cats:["time","actions"],chars:[{c:"过",p:"guò",z:"ㄍㄨㄛˋ",m:"pass"},{c:"去",p:"qù",z:"ㄑㄩˋ",m:"go"}]},
+{w:"还是",p:"háishi",z:"ㄏㄞˊ ˙ㄕ",m:"or; still; had better",hsk:3,cats:["grammar"],chars:[{c:"还",p:"hái",z:"ㄏㄞˊ",m:"still"},{c:"是",p:"shi",z:"˙ㄕ",m:"is"}]},
+{w:"换",p:"huàn",z:"ㄏㄨㄢˋ",m:"to change; to exchange",hsk:3,cats:["actions"],chars:[{c:"换",p:"huàn",z:"ㄏㄨㄢˋ",m:"change"}]},
+{w:"回答",p:"huídá",z:"ㄏㄨㄟˊ ㄉㄚˊ",m:"to answer; to reply",hsk:3,cats:["actions","school"],chars:[{c:"回",p:"huí",z:"ㄏㄨㄟˊ",m:"return"},{c:"答",p:"dá",z:"ㄉㄚˊ",m:"answer"}]},
+{w:"活动",p:"huódòng",z:"ㄏㄨㄛˊ ㄉㄨㄥˋ",m:"activity; to move around",hsk:3,cats:["sports","social"],chars:[{c:"活",p:"huó",z:"ㄏㄨㄛˊ",m:"live"},{c:"动",p:"dòng",z:"ㄉㄨㄥˋ",m:"move"}]},
+{w:"机会",p:"jīhuì",z:"ㄐㄧ ㄏㄨㄟˋ",m:"opportunity; chance",hsk:3,cats:["work","grammar"],chars:[{c:"机",p:"jī",z:"ㄐㄧ",m:"machine"},{c:"会",p:"huì",z:"ㄏㄨㄟˋ",m:"meeting"}]},
+{w:"记得",p:"jìde",z:"ㄐㄧˋ ˙ㄉㄜ",m:"to remember; to recall",hsk:3,cats:["actions","emotions"],chars:[{c:"记",p:"jì",z:"ㄐㄧˋ",m:"remember"},{c:"得",p:"de",z:"˙ㄉㄜ",m:"(particle)"}]},
+{w:"检查",p:"jiǎnchá",z:"ㄐㄧㄢˇ ㄔㄚˊ",m:"to check; to examine",hsk:3,cats:["actions","body","school"],chars:[{c:"检",p:"jiǎn",z:"ㄐㄧㄢˇ",m:"check"},{c:"查",p:"chá",z:"ㄔㄚˊ",m:"investigate"}]},
+{w:"见面",p:"jiànmiàn",z:"ㄐㄧㄢˋ ㄇㄧㄢˋ",m:"to meet; to see each other",hsk:3,cats:["social","actions"],chars:[{c:"见",p:"jiàn",z:"ㄐㄧㄢˋ",m:"see"},{c:"面",p:"miàn",z:"ㄇㄧㄢˋ",m:"face"}]},
+{w:"健康",p:"jiànkāng",z:"ㄐㄧㄢˋ ㄎㄤ",m:"healthy; health",hsk:3,cats:["body","sports"],chars:[{c:"健",p:"jiàn",z:"ㄐㄧㄢˋ",m:"healthy"},{c:"康",p:"kāng",z:"ㄎㄤ",m:"health"}]},
+{w:"经常",p:"jīngcháng",z:"ㄐㄧㄥ ㄔㄤˊ",m:"often; frequently",hsk:3,cats:["grammar","time"],chars:[{c:"经",p:"jīng",z:"ㄐㄧㄥ",m:"pass"},{c:"常",p:"cháng",z:"ㄔㄤˊ",m:"often"}]},
+{w:"句子",p:"jùzi",z:"ㄐㄩˋ ˙ㄗ",m:"sentence",hsk:3,cats:["school","grammar"],chars:[{c:"句",p:"jù",z:"ㄐㄩˋ",m:"sentence"},{c:"子",p:"zi",z:"˙ㄗ",m:"(suffix)"}]},
+{w:"决定",p:"juédìng",z:"ㄐㄩㄝˊ ㄉㄧㄥˋ",m:"to decide; decision",hsk:3,cats:["actions"],chars:[{c:"决",p:"jué",z:"ㄐㄩㄝˊ",m:"decide"},{c:"定",p:"dìng",z:"ㄉㄧㄥˋ",m:"determine"}]},
+{w:"可爱",p:"kě'ài",z:"ㄎㄜˇ ㄞˋ",m:"cute; lovely; adorable",hsk:3,cats:["emotions"],chars:[{c:"可",p:"kě",z:"ㄎㄜˇ",m:"can"},{c:"爱",p:"ài",z:"ㄞˋ",m:"love"}]},
+{w:"空气",p:"kōngqì",z:"ㄎㄨㄥ ㄑㄧˋ",m:"air; atmosphere",hsk:3,cats:["nature"],chars:[{c:"空",p:"kōng",z:"ㄎㄨㄥ",m:"empty"},{c:"气",p:"qì",z:"ㄑㄧˋ",m:"air"}]},
+{w:"哭",p:"kū",z:"ㄎㄨ",m:"to cry; to weep",hsk:3,cats:["actions","emotions"],chars:[{c:"哭",p:"kū",z:"ㄎㄨ",m:"cry"}]},
+{w:"裤子",p:"kùzi",z:"ㄎㄨˋ ˙ㄗ",m:"pants; trousers",hsk:3,cats:["clothing"],chars:[{c:"裤",p:"kù",z:"ㄎㄨˋ",m:"trousers"},{c:"子",p:"zi",z:"˙ㄗ",m:"(suffix)"}]},
+{w:"筷子",p:"kuàizi",z:"ㄎㄨㄞˋ ˙ㄗ",m:"chopsticks",hsk:3,cats:["kitchen","food"],chars:[{c:"筷",p:"kuài",z:"ㄎㄨㄞˋ",m:"chopsticks"},{c:"子",p:"zi",z:"˙ㄗ",m:"(suffix)"}]},
+{w:"蓝",p:"lán",z:"ㄌㄢˊ",m:"blue",hsk:3,cats:["colors"],chars:[{c:"蓝",p:"lán",z:"ㄌㄢˊ",m:"blue"}]},
+{w:"马上",p:"mǎshàng",z:"ㄇㄚˇ ㄕㄤˋ",m:"immediately; right away",hsk:3,cats:["grammar","time"],chars:[{c:"马",p:"mǎ",z:"ㄇㄚˇ",m:"horse"},{c:"上",p:"shàng",z:"ㄕㄤˋ",m:"up"}]},
+{w:"面包",p:"miànbāo",z:"ㄇㄧㄢˋ ㄅㄠ",m:"bread",hsk:3,cats:["food","kitchen"],chars:[{c:"面",p:"miàn",z:"ㄇㄧㄢˋ",m:"flour"},{c:"包",p:"bāo",z:"ㄅㄠ",m:"wrap"}]},
+{w:"明白",p:"míngbai",z:"ㄇㄧㄥˊ ˙ㄅㄞ",m:"to understand; clear",hsk:3,cats:["actions","school"],chars:[{c:"明",p:"míng",z:"ㄇㄧㄥˊ",m:"bright"},{c:"白",p:"bai",z:"˙ㄅㄞ",m:"clear"}]},
+{w:"难",p:"nán",z:"ㄋㄢˊ",m:"difficult; hard",hsk:3,cats:["school","grammar"],chars:[{c:"难",p:"nán",z:"ㄋㄢˊ",m:"difficult"}]},
+{w:"努力",p:"nǔlì",z:"ㄋㄨˇ ㄌㄧˋ",m:"to work hard; diligent",hsk:3,cats:["emotions","school","actions"],chars:[{c:"努",p:"nǔ",z:"ㄋㄨˇ",m:"exert"},{c:"力",p:"lì",z:"ㄌㄧˋ",m:"strength"}]},
+{w:"爬山",p:"páshān",z:"ㄆㄚˊ ㄕㄢ",m:"to climb a mountain; hiking",hsk:3,cats:["sports"],chars:[{c:"爬",p:"pá",z:"ㄆㄚˊ",m:"climb"},{c:"山",p:"shān",z:"ㄕㄢ",m:"mountain"}]},
+{w:"盘子",p:"pánzi",z:"ㄆㄢˊ ˙ㄗ",m:"plate; dish",hsk:3,cats:["kitchen","food"],chars:[{c:"盘",p:"pán",z:"ㄆㄢˊ",m:"plate"},{c:"子",p:"zi",z:"˙ㄗ",m:"(suffix)"}]},
+{w:"普通话",p:"Pǔtōnghuà",z:"ㄆㄨˇ ㄊㄨㄥ ㄏㄨㄚˋ",m:"Mandarin Chinese",hsk:3,cats:["school","social"],chars:[{c:"普",p:"pǔ",z:"ㄆㄨˇ",m:"universal"},{c:"通",p:"tōng",z:"ㄊㄨㄥ",m:"through"},{c:"话",p:"huà",z:"ㄏㄨㄚˋ",m:"speech"}]},
+{w:"其实",p:"qíshí",z:"ㄑㄧˊ ㄕˊ",m:"actually; in fact",hsk:3,cats:["grammar"],chars:[{c:"其",p:"qí",z:"ㄑㄧˊ",m:"its"},{c:"实",p:"shí",z:"ㄕˊ",m:"real"}]},
+{w:"奇怪",p:"qíguài",z:"ㄑㄧˊ ㄍㄨㄞˋ",m:"strange; odd; peculiar",hsk:3,cats:["emotions"],chars:[{c:"奇",p:"qí",z:"ㄑㄧˊ",m:"strange"},{c:"怪",p:"guài",z:"ㄍㄨㄞˋ",m:"strange"}]},
+{w:"清楚",p:"qīngchu",z:"ㄑㄧㄥ ˙ㄔㄨ",m:"clear; distinct; to understand",hsk:3,cats:["grammar","school"],chars:[{c:"清",p:"qīng",z:"ㄑㄧㄥ",m:"clear"},{c:"楚",p:"chu",z:"˙ㄔㄨ",m:"clear"}]},
+{w:"认为",p:"rènwéi",z:"ㄖㄣˋ ㄨㄟˊ",m:"to think; to believe",hsk:3,cats:["actions","grammar"],chars:[{c:"认",p:"rèn",z:"ㄖㄣˋ",m:"recognize"},{c:"为",p:"wéi",z:"ㄨㄟˊ",m:"be"}]},
+{w:"容易",p:"róngyì",z:"ㄖㄨㄥˊ ㄧˋ",m:"easy; simple",hsk:3,cats:["grammar","school"],chars:[{c:"容",p:"róng",z:"ㄖㄨㄥˊ",m:"contain"},{c:"易",p:"yì",z:"ㄧˋ",m:"easy"}]},
+{w:"如果",p:"rúguǒ",z:"ㄖㄨˊ ㄍㄨㄛˇ",m:"if; supposing",hsk:3,cats:["grammar"],chars:[{c:"如",p:"rú",z:"ㄖㄨˊ",m:"if"},{c:"果",p:"guǒ",z:"ㄍㄨㄛˇ",m:"result"}]},
+{w:"声音",p:"shēngyīn",z:"ㄕㄥ ㄧㄣ",m:"sound; voice",hsk:3,cats:["body","grammar"],chars:[{c:"声",p:"shēng",z:"ㄕㄥ",m:"sound"},{c:"音",p:"yīn",z:"ㄧㄣ",m:"sound"}]},
+{w:"世界",p:"shìjiè",z:"ㄕˋ ㄐㄧㄝˋ",m:"world",hsk:3,cats:["places","grammar"],chars:[{c:"世",p:"shì",z:"ㄕˋ",m:"world"},{c:"界",p:"jiè",z:"ㄐㄧㄝˋ",m:"boundary"}]},
+{w:"树",p:"shù",z:"ㄕㄨˋ",m:"tree",hsk:3,cats:["nature"],chars:[{c:"树",p:"shù",z:"ㄕㄨˋ",m:"tree"}]},
+{w:"双",p:"shuāng",z:"ㄕㄨㄤ",m:"pair; both; double",hsk:3,cats:["grammar","clothing"],chars:[{c:"双",p:"shuāng",z:"ㄕㄨㄤ",m:"pair"}]},
+{w:"送",p:"sòng",z:"ㄙㄨㄥˋ",m:"to send; to give; to deliver",hsk:3,cats:["actions","social"],chars:[{c:"送",p:"sòng",z:"ㄙㄨㄥˋ",m:"send"}]},
+{w:"虽然",p:"suīrán",z:"ㄙㄨㄟ ㄖㄢˊ",m:"although; even though",hsk:3,cats:["grammar"],chars:[{c:"虽",p:"suī",z:"ㄙㄨㄟ",m:"although"},{c:"然",p:"rán",z:"ㄖㄢˊ",m:"naturally"}]},
+{w:"太阳",p:"tàiyáng",z:"ㄊㄞˋ ㄧㄤˊ",m:"sun",hsk:3,cats:["nature"],chars:[{c:"太",p:"tài",z:"ㄊㄞˋ",m:"great"},{c:"阳",p:"yáng",z:"ㄧㄤˊ",m:"sun"}]},
+{w:"特别",p:"tèbié",z:"ㄊㄜˋ ㄅㄧㄝˊ",m:"especially; special; particular",hsk:3,cats:["grammar"],chars:[{c:"特",p:"tè",z:"ㄊㄜˋ",m:"special"},{c:"别",p:"bié",z:"ㄅㄧㄝˊ",m:"other"}]},
+{w:"同意",p:"tóngyì",z:"ㄊㄨㄥˊ ㄧˋ",m:"to agree; to approve",hsk:3,cats:["actions","social"],chars:[{c:"同",p:"tóng",z:"ㄊㄨㄥˊ",m:"same"},{c:"意",p:"yì",z:"ㄧˋ",m:"meaning"}]},
+{w:"突然",p:"tūrán",z:"ㄊㄨ ㄖㄢˊ",m:"suddenly; unexpectedly",hsk:3,cats:["grammar"],chars:[{c:"突",p:"tū",z:"ㄊㄨ",m:"sudden"},{c:"然",p:"rán",z:"ㄖㄢˊ",m:"naturally"}]},
+{w:"信",p:"xìn",z:"ㄒㄧㄣˋ",m:"letter; to believe",hsk:3,cats:["social","grammar"],chars:[{c:"信",p:"xìn",z:"ㄒㄧㄣˋ",m:"believe"}]},
+{w:"行",p:"xíng",z:"ㄒㄧㄥˊ",m:"OK; to walk; capable",hsk:3,cats:["grammar","actions"],chars:[{c:"行",p:"xíng",z:"ㄒㄧㄥˊ",m:"walk"}]},
+{w:"意思",p:"yìsi",z:"ㄧˋ ˙ㄙ",m:"meaning; idea",hsk:3,cats:["grammar","school"],chars:[{c:"意",p:"yì",z:"ㄧˋ",m:"meaning"},{c:"思",p:"si",z:"˙ㄙ",m:"think"}]},
+{w:"音乐",p:"yīnyuè",z:"ㄧㄣ ㄩㄝˋ",m:"music",hsk:3,cats:["sports","social"],chars:[{c:"音",p:"yīn",z:"ㄧㄣ",m:"sound"},{c:"乐",p:"yuè",z:"ㄩㄝˋ",m:"music"}]},
+{w:"用",p:"yòng",z:"ㄩㄥˋ",m:"to use; use",hsk:3,cats:["actions","grammar"],chars:[{c:"用",p:"yòng",z:"ㄩㄥˋ",m:"use"}]},
+{w:"一般",p:"yībān",z:"ㄧ ㄅㄢ",m:"generally; ordinary",hsk:3,cats:["grammar"],chars:[{c:"一",p:"yī",z:"ㄧ",m:"one"},{c:"般",p:"bān",z:"ㄅㄢ",m:"kind"}]},
+{w:"以后",p:"yǐhòu",z:"ㄧˇ ㄏㄡˋ",m:"after; afterwards",hsk:3,cats:["time","grammar"],chars:[{c:"以",p:"yǐ",z:"ㄧˇ",m:"after"},{c:"后",p:"hòu",z:"ㄏㄡˋ",m:"after"}]},
+{w:"以前",p:"yǐqián",z:"ㄧˇ ㄑㄧㄢˊ",m:"before; previously",hsk:3,cats:["time","grammar"],chars:[{c:"以",p:"yǐ",z:"ㄧˇ",m:"before"},{c:"前",p:"qián",z:"ㄑㄧㄢˊ",m:"before"}]},
+{w:"一直",p:"yīzhí",z:"ㄧ ㄓˊ",m:"always; continuously; straight",hsk:3,cats:["grammar"],chars:[{c:"一",p:"yī",z:"ㄧ",m:"one"},{c:"直",p:"zhí",z:"ㄓˊ",m:"straight"}]},
+{w:"月亮",p:"yuèliang",z:"ㄩㄝˋ ˙ㄌㄧㄤ",m:"moon",hsk:3,cats:["nature"],chars:[{c:"月",p:"yuè",z:"ㄩㄝˋ",m:"moon"},{c:"亮",p:"liang",z:"˙ㄌㄧㄤ",m:"bright"}]},
+{w:"着急",p:"zháojí",z:"ㄓㄠˊ ㄐㄧˊ",m:"to worry; to be anxious",hsk:3,cats:["emotions"],chars:[{c:"着",p:"zháo",z:"ㄓㄠˊ",m:"touch"},{c:"急",p:"jí",z:"ㄐㄧˊ",m:"urgent"}]},
+{w:"站",p:"zhàn",z:"ㄓㄢˋ",m:"station; stop; to stand",hsk:3,cats:["travel","actions"],chars:[{c:"站",p:"zhàn",z:"ㄓㄢˋ",m:"stand"}]},
+{w:"照顾",p:"zhàogù",z:"ㄓㄠˋ ㄍㄨˋ",m:"to take care of",hsk:3,cats:["actions","body","social"],chars:[{c:"照",p:"zhào",z:"ㄓㄠˋ",m:"take care"},{c:"顾",p:"gù",z:"ㄍㄨˋ",m:"look after"}]},
+{w:"照相机",p:"zhàoxiàngjī",z:"ㄓㄠˋ ㄒㄧㄤˋ ㄐㄧ",m:"camera",hsk:3,cats:["tech","travel"],chars:[{c:"照",p:"zhào",z:"ㄓㄠˋ",m:"photograph"},{c:"相",p:"xiàng",z:"ㄒㄧㄤˋ",m:"photograph"},{c:"机",p:"jī",z:"ㄐㄧ",m:"machine"}]},
+{w:"只",p:"zhǐ",z:"ㄓˇ",m:"only; just; merely",hsk:3,cats:["grammar"],chars:[{c:"只",p:"zhǐ",z:"ㄓˇ",m:"only"}]},
+{w:"中间",p:"zhōngjiān",z:"ㄓㄨㄥ ㄐㄧㄢ",m:"middle; center; between",hsk:3,cats:["places","grammar"],chars:[{c:"中",p:"zhōng",z:"ㄓㄨㄥ",m:"middle"},{c:"间",p:"jiān",z:"ㄐㄧㄢ",m:"between"}]},
+{w:"重要",p:"zhòngyào",z:"ㄓㄨㄥˋ ㄧㄠˋ",m:"important; significant",hsk:3,cats:["grammar"],chars:[{c:"重",p:"zhòng",z:"ㄓㄨㄥˋ",m:"important"},{c:"要",p:"yào",z:"ㄧㄠˋ",m:"need"}]},
+{w:"注意",p:"zhùyì",z:"ㄓㄨˋ ㄧˋ",m:"to pay attention; be careful",hsk:3,cats:["actions","school"],chars:[{c:"注",p:"zhù",z:"ㄓㄨˋ",m:"pour"},{c:"意",p:"yì",z:"ㄧˋ",m:"intention"}]},
+// ── HSK 4 ──
+{w:"保护",p:"bǎohù",z:"ㄅㄠˇ ㄏㄨˋ",m:"to protect; protection",hsk:4,cats:["actions"],chars:[{c:"保",p:"bǎo",z:"ㄅㄠˇ",m:"protect"},{c:"护",p:"hù",z:"ㄏㄨˋ",m:"guard"}]},
+{w:"包括",p:"bāokuò",z:"ㄅㄠ ㄎㄨㄛˋ",m:"to include; to consist of",hsk:4,cats:["grammar"],chars:[{c:"包",p:"bāo",z:"ㄅㄠ",m:"include"},{c:"括",p:"kuò",z:"ㄎㄨㄛˋ",m:"encompass"}]},
+{w:"步行",p:"bùxíng",z:"ㄅㄨˋ ㄒㄧㄥˊ",m:"to walk; on foot",hsk:4,cats:["actions","sports","travel"],chars:[{c:"步",p:"bù",z:"ㄅㄨˋ",m:"step"},{c:"行",p:"xíng",z:"ㄒㄧㄥˊ",m:"walk"}]},
+{w:"成功",p:"chénggōng",z:"ㄔㄥˊ ㄍㄨㄥ",m:"to succeed; success",hsk:4,cats:["work","emotions"],chars:[{c:"成",p:"chéng",z:"ㄔㄥˊ",m:"succeed"},{c:"功",p:"gōng",z:"ㄍㄨㄥ",m:"merit"}]},
+{w:"传统",p:"chuántǒng",z:"ㄔㄨㄢˊ ㄊㄨㄥˇ",m:"tradition; traditional",hsk:4,cats:["social"],chars:[{c:"传",p:"chuán",z:"ㄔㄨㄢˊ",m:"pass down"},{c:"统",p:"tǒng",z:"ㄊㄨㄥˇ",m:"unite"}]},
+{w:"存在",p:"cúnzài",z:"ㄘㄨㄣˊ ㄗㄞˋ",m:"to exist; existence",hsk:4,cats:["grammar"],chars:[{c:"存",p:"cún",z:"ㄘㄨㄣˊ",m:"exist"},{c:"在",p:"zài",z:"ㄗㄞˋ",m:"at"}]},
+{w:"发展",p:"fāzhǎn",z:"ㄈㄚ ㄓㄢˇ",m:"to develop; development",hsk:4,cats:["work","grammar"],chars:[{c:"发",p:"fā",z:"ㄈㄚ",m:"develop"},{c:"展",p:"zhǎn",z:"ㄓㄢˇ",m:"expand"}]},
+{w:"丰富",p:"fēngfù",z:"ㄈㄥ ㄈㄨˋ",m:"rich; abundant; to enrich",hsk:4,cats:["grammar"],chars:[{c:"丰",p:"fēng",z:"ㄈㄥ",m:"plentiful"},{c:"富",p:"fù",z:"ㄈㄨˋ",m:"rich"}]},
+{w:"负责",p:"fùzé",z:"ㄈㄨˋ ㄗㄜˊ",m:"responsible; in charge",hsk:4,cats:["work","grammar"],chars:[{c:"负",p:"fù",z:"ㄈㄨˋ",m:"bear"},{c:"责",p:"zé",z:"ㄗㄜˊ",m:"responsibility"}]},
+{w:"复杂",p:"fùzá",z:"ㄈㄨˋ ㄗㄚˊ",m:"complex; complicated",hsk:4,cats:["grammar"],chars:[{c:"复",p:"fù",z:"ㄈㄨˋ",m:"complex"},{c:"杂",p:"zá",z:"ㄗㄚˊ",m:"mixed"}]},
+{w:"感动",p:"gǎndòng",z:"ㄍㄢˇ ㄉㄨㄥˋ",m:"to be moved emotionally; touching",hsk:4,cats:["emotions"],chars:[{c:"感",p:"gǎn",z:"ㄍㄢˇ",m:"feel"},{c:"动",p:"dòng",z:"ㄉㄨㄥˋ",m:"move"}]},
+{w:"感情",p:"gǎnqíng",z:"ㄍㄢˇ ㄑㄧㄥˊ",m:"emotion; feeling; affection",hsk:4,cats:["emotions","social"],chars:[{c:"感",p:"gǎn",z:"ㄍㄢˇ",m:"feel"},{c:"情",p:"qíng",z:"ㄑㄧㄥˊ",m:"feeling"}]},
+{w:"感谢",p:"gǎnxiè",z:"ㄍㄢˇ ㄒㄧㄝˋ",m:"to thank; to be grateful",hsk:4,cats:["emotions","social"],chars:[{c:"感",p:"gǎn",z:"ㄍㄢˇ",m:"feel"},{c:"谢",p:"xiè",z:"ㄒㄧㄝˋ",m:"thank"}]},
+{w:"根据",p:"gēnjù",z:"ㄍㄣ ㄐㄩˋ",m:"according to; based on",hsk:4,cats:["grammar"],chars:[{c:"根",p:"gēn",z:"ㄍㄣ",m:"root"},{c:"据",p:"jù",z:"ㄐㄩˋ",m:"according to"}]},
+{w:"广告",p:"guǎnggào",z:"ㄍㄨㄤˇ ㄍㄠˋ",m:"advertisement; commercial",hsk:4,cats:["work","money"],chars:[{c:"广",p:"guǎng",z:"ㄍㄨㄤˇ",m:"wide"},{c:"告",p:"gào",z:"ㄍㄠˋ",m:"announce"}]},
+{w:"国家",p:"guójiā",z:"ㄍㄨㄛˊ ㄐㄧㄚ",m:"country; nation; state",hsk:4,cats:["places"],chars:[{c:"国",p:"guó",z:"ㄍㄨㄛˊ",m:"country"},{c:"家",p:"jiā",z:"ㄐㄧㄚ",m:"family"}]},
+{w:"国际",p:"guójì",z:"ㄍㄨㄛˊ ㄐㄧˋ",m:"international",hsk:4,cats:["work","places"],chars:[{c:"国",p:"guó",z:"ㄍㄨㄛˊ",m:"country"},{c:"际",p:"jì",z:"ㄐㄧˋ",m:"border"}]},
+{w:"害怕",p:"hàipà",z:"ㄏㄞˋ ㄆㄚˋ",m:"to be afraid; to fear",hsk:4,cats:["emotions"],chars:[{c:"害",p:"hài",z:"ㄏㄞˋ",m:"harm"},{c:"怕",p:"pà",z:"ㄆㄚˋ",m:"fear"}]},
+{w:"后来",p:"hòulái",z:"ㄏㄡˋ ㄌㄞˊ",m:"afterwards; later; then",hsk:4,cats:["time","grammar"],chars:[{c:"后",p:"hòu",z:"ㄏㄡˋ",m:"after"},{c:"来",p:"lái",z:"ㄌㄞˊ",m:"come"}]},
+{w:"环境",p:"huánjìng",z:"ㄏㄨㄢˊ ㄐㄧㄥˋ",m:"environment; surroundings",hsk:4,cats:["nature","places"],chars:[{c:"环",p:"huán",z:"ㄏㄨㄢˊ",m:"surround"},{c:"境",p:"jìng",z:"ㄐㄧㄥˋ",m:"situation"}]},
+{w:"坚持",p:"jiānchí",z:"ㄐㄧㄢ ㄔˊ",m:"to persist; to insist; to keep up",hsk:4,cats:["actions","sports","emotions"],chars:[{c:"坚",p:"jiān",z:"ㄐㄧㄢ",m:"firm"},{c:"持",p:"chí",z:"ㄔˊ",m:"hold"}]},
+{w:"几乎",p:"jīhū",z:"ㄐㄧ ㄏㄨ",m:"almost; nearly",hsk:4,cats:["grammar"],chars:[{c:"几",p:"jī",z:"ㄐㄧ",m:"almost"},{c:"乎",p:"hū",z:"ㄏㄨ",m:"(particle)"}]},
+{w:"经济",p:"jīngjì",z:"ㄐㄧㄥ ㄐㄧˋ",m:"economy; economics",hsk:4,cats:["work","money"],chars:[{c:"经",p:"jīng",z:"ㄐㄧㄥ",m:"manage"},{c:"济",p:"jì",z:"ㄐㄧˋ",m:"aid"}]},
+{w:"精彩",p:"jīngcǎi",z:"ㄐㄧㄥ ㄘㄞˇ",m:"brilliant; splendid; wonderful",hsk:4,cats:["emotions","sports"],chars:[{c:"精",p:"jīng",z:"ㄐㄧㄥ",m:"essence"},{c:"彩",p:"cǎi",z:"ㄘㄞˇ",m:"color"}]},
+{w:"举行",p:"jǔxíng",z:"ㄐㄩˇ ㄒㄧㄥˊ",m:"to hold (an event)",hsk:4,cats:["actions","social"],chars:[{c:"举",p:"jǔ",z:"ㄐㄩˇ",m:"lift"},{c:"行",p:"xíng",z:"ㄒㄧㄥˊ",m:"do"}]},
+{w:"开玩笑",p:"kāi wánxiào",z:"ㄎㄞ ㄨㄢˊ ㄒㄧㄠˋ",m:"to joke; to kid",hsk:4,cats:["social","actions"],chars:[{c:"开",p:"kāi",z:"ㄎㄞ",m:"open"},{c:"玩",p:"wán",z:"ㄨㄢˊ",m:"play"},{c:"笑",p:"xiào",z:"ㄒㄧㄠˋ",m:"laugh"}]},
+{w:"可惜",p:"kěxī",z:"ㄎㄜˇ ㄒㄧ",m:"it's a pity; unfortunately",hsk:4,cats:["emotions"],chars:[{c:"可",p:"kě",z:"ㄎㄜˇ",m:"worthy of"},{c:"惜",p:"xī",z:"ㄒㄧ",m:"pity"}]},
+{w:"来不及",p:"lái bu jí",z:"ㄌㄞˊ ˙ㄅㄨ ㄐㄧˊ",m:"not enough time; too late",hsk:4,cats:["grammar","time"],chars:[{c:"来",p:"lái",z:"ㄌㄞˊ",m:"come"},{c:"不",p:"bu",z:"˙ㄅㄨ",m:"not"},{c:"及",p:"jí",z:"ㄐㄧˊ",m:"reach"}]},
+{w:"历史",p:"lìshǐ",z:"ㄌㄧˋ ㄕˇ",m:"history",hsk:4,cats:["school"],chars:[{c:"历",p:"lì",z:"ㄌㄧˋ",m:"experience"},{c:"史",p:"shǐ",z:"ㄕˇ",m:"history"}]},
+{w:"礼貌",p:"lǐmào",z:"ㄌㄧˇ ㄇㄠˋ",m:"polite; politeness; manners",hsk:4,cats:["social","grammar"],chars:[{c:"礼",p:"lǐ",z:"ㄌㄧˇ",m:"rite"},{c:"貌",p:"mào",z:"ㄇㄠˋ",m:"appearance"}]},
+{w:"联系",p:"liánxì",z:"ㄌㄧㄢˊ ㄒㄧˋ",m:"to contact; to get in touch",hsk:4,cats:["actions","social"],chars:[{c:"联",p:"lián",z:"ㄌㄧㄢˊ",m:"connect"},{c:"系",p:"xì",z:"ㄒㄧˋ",m:"connect"}]},
+{w:"留学",p:"liúxué",z:"ㄌㄧㄡˊ ㄒㄩㄝˊ",m:"to study abroad",hsk:4,cats:["school","travel"],chars:[{c:"留",p:"liú",z:"ㄌㄧㄡˊ",m:"stay"},{c:"学",p:"xué",z:"ㄒㄩㄝˊ",m:"study"}]},
+{w:"麻烦",p:"máfan",z:"ㄇㄚˊ ˙ㄈㄢ",m:"troublesome; to trouble; bother",hsk:4,cats:["social","grammar"],chars:[{c:"麻",p:"má",z:"ㄇㄚˊ",m:"trouble"},{c:"烦",p:"fan",z:"˙ㄈㄢ",m:"vexed"}]},
+{w:"满意",p:"mǎnyì",z:"ㄇㄢˇ ㄧˋ",m:"satisfied; pleased",hsk:4,cats:["emotions"],chars:[{c:"满",p:"mǎn",z:"ㄇㄢˇ",m:"full"},{c:"意",p:"yì",z:"ㄧˋ",m:"meaning"}]},
+{w:"目前",p:"mùqián",z:"ㄇㄨˋ ㄑㄧㄢˊ",m:"at present; currently",hsk:4,cats:["time","grammar"],chars:[{c:"目",p:"mù",z:"ㄇㄨˋ",m:"eye"},{c:"前",p:"qián",z:"ㄑㄧㄢˊ",m:"before"}]},
+{w:"批评",p:"pīpíng",z:"ㄆㄧ ㄆㄧㄥˊ",m:"to criticize; criticism",hsk:4,cats:["actions","school"],chars:[{c:"批",p:"pī",z:"ㄆㄧ",m:"criticize"},{c:"评",p:"píng",z:"ㄆㄧㄥˊ",m:"evaluate"}]},
+{w:"亲戚",p:"qīnqi",z:"ㄑㄧㄣ ˙ㄑㄧ",m:"relative; family member",hsk:4,cats:["family"],chars:[{c:"亲",p:"qīn",z:"ㄑㄧㄣ",m:"close"},{c:"戚",p:"qi",z:"˙ㄑㄧ",m:"relative"}]},
+{w:"全部",p:"quánbù",z:"ㄑㄩㄢˊ ㄅㄨˋ",m:"all; whole; entire",hsk:4,cats:["grammar"],chars:[{c:"全",p:"quán",z:"ㄑㄩㄢˊ",m:"whole"},{c:"部",p:"bù",z:"ㄅㄨˋ",m:"part"}]},
+{w:"社会",p:"shèhuì",z:"ㄕㄜˋ ㄏㄨㄟˋ",m:"society",hsk:4,cats:["social","places"],chars:[{c:"社",p:"shè",z:"ㄕㄜˋ",m:"society"},{c:"会",p:"huì",z:"ㄏㄨㄟˋ",m:"meeting"}]},
+{w:"适合",p:"shìhé",z:"ㄕˋ ㄏㄜˊ",m:"suitable; appropriate",hsk:4,cats:["grammar"],chars:[{c:"适",p:"shì",z:"ㄕˋ",m:"suitable"},{c:"合",p:"hé",z:"ㄏㄜˊ",m:"fit"}]},
+{w:"数学",p:"shùxué",z:"ㄕㄨˋ ㄒㄩㄝˊ",m:"mathematics; math",hsk:4,cats:["school"],chars:[{c:"数",p:"shù",z:"ㄕㄨˋ",m:"number"},{c:"学",p:"xué",z:"ㄒㄩㄝˊ",m:"study"}]},
+{w:"顺利",p:"shùnlì",z:"ㄕㄨㄣˋ ㄌㄧˋ",m:"smooth; successful",hsk:4,cats:["grammar","work"],chars:[{c:"顺",p:"shùn",z:"ㄕㄨㄣˋ",m:"smooth"},{c:"利",p:"lì",z:"ㄌㄧˋ",m:"benefit"}]},
+{w:"随便",p:"suíbiàn",z:"ㄙㄨㄟˊ ㄅㄧㄢˋ",m:"casual; as you like",hsk:4,cats:["grammar","social"],chars:[{c:"随",p:"suí",z:"ㄙㄨㄟˊ",m:"follow"},{c:"便",p:"biàn",z:"ㄅㄧㄢˋ",m:"convenient"}]},
+{w:"态度",p:"tàidù",z:"ㄊㄞˋ ㄉㄨˋ",m:"attitude; manner",hsk:4,cats:["emotions","social"],chars:[{c:"态",p:"tài",z:"ㄊㄞˋ",m:"attitude"},{c:"度",p:"dù",z:"ㄉㄨˋ",m:"degree"}]},
+{w:"讨论",p:"tǎolùn",z:"ㄊㄠˇ ㄌㄨㄣˋ",m:"to discuss; discussion",hsk:4,cats:["actions","school","social"],chars:[{c:"讨",p:"tǎo",z:"ㄊㄠˇ",m:"discuss"},{c:"论",p:"lùn",z:"ㄌㄨㄣˋ",m:"theory"}]},
+{w:"提高",p:"tígāo",z:"ㄊㄧˊ ㄍㄠ",m:"to improve; to raise",hsk:4,cats:["actions","school","work"],chars:[{c:"提",p:"tí",z:"ㄊㄧˊ",m:"raise"},{c:"高",p:"gāo",z:"ㄍㄠ",m:"high"}]},
+{w:"同事",p:"tóngshì",z:"ㄊㄨㄥˊ ㄕˋ",m:"colleague; coworker",hsk:4,cats:["work","social"],chars:[{c:"同",p:"tóng",z:"ㄊㄨㄥˊ",m:"same"},{c:"事",p:"shì",z:"ㄕˋ",m:"matter"}]},
+{w:"文化",p:"wénhuà",z:"ㄨㄣˊ ㄏㄨㄚˋ",m:"culture; civilization",hsk:4,cats:["social","school"],chars:[{c:"文",p:"wén",z:"ㄨㄣˊ",m:"culture"},{c:"化",p:"huà",z:"ㄏㄨㄚˋ",m:"transform"}]},
+{w:"新闻",p:"xīnwén",z:"ㄒㄧㄣ ㄨㄣˊ",m:"news",hsk:4,cats:["work","social"],chars:[{c:"新",p:"xīn",z:"ㄒㄧㄣ",m:"new"},{c:"闻",p:"wén",z:"ㄨㄣˊ",m:"news"}]},
+{w:"性格",p:"xìnggé",z:"ㄒㄧㄥˋ ㄍㄜˊ",m:"personality; character",hsk:4,cats:["emotions","social"],chars:[{c:"性",p:"xìng",z:"ㄒㄧㄥˋ",m:"nature"},{c:"格",p:"gé",z:"ㄍㄜˊ",m:"character"}]},
+{w:"选择",p:"xuǎnzé",z:"ㄒㄩㄢˇ ㄗㄜˊ",m:"to choose; to select",hsk:4,cats:["actions"],chars:[{c:"选",p:"xuǎn",z:"ㄒㄩㄢˇ",m:"choose"},{c:"择",p:"zé",z:"ㄗㄜˊ",m:"select"}]},
+{w:"研究",p:"yánjiū",z:"ㄧㄢˊ ㄐㄧㄡ",m:"to research; research",hsk:4,cats:["school","work"],chars:[{c:"研",p:"yán",z:"ㄧㄢˊ",m:"research"},{c:"究",p:"jiū",z:"ㄐㄧㄡ",m:"investigate"}]},
+{w:"影响",p:"yǐngxiǎng",z:"ㄧㄥˇ ㄒㄧㄤˇ",m:"influence; effect; to affect",hsk:4,cats:["grammar","work"],chars:[{c:"影",p:"yǐng",z:"ㄧㄥˇ",m:"shadow"},{c:"响",p:"xiǎng",z:"ㄒㄧㄤˇ",m:"affect"}]},
+{w:"越来越",p:"yuèláiyuè",z:"ㄩㄝˋ ㄌㄞˊ ㄩㄝˋ",m:"more and more",hsk:4,cats:["grammar"],chars:[{c:"越",p:"yuè",z:"ㄩㄝˋ",m:"exceed"},{c:"来",p:"lái",z:"ㄌㄞˊ",m:"come"},{c:"越",p:"yuè",z:"ㄩㄝˋ",m:"exceed"}]},
+{w:"语法",p:"yǔfǎ",z:"ㄩˇ ㄈㄚˇ",m:"grammar",hsk:4,cats:["school","grammar"],chars:[{c:"语",p:"yǔ",z:"ㄩˇ",m:"language"},{c:"法",p:"fǎ",z:"ㄈㄚˇ",m:"method"}]},
+// ── HSK 5 ──
+{w:"表达",p:"biǎodá",z:"ㄅㄧㄠˇ ㄉㄚˊ",m:"to express; to convey",hsk:5,cats:["actions","grammar"],chars:[{c:"表",p:"biǎo",z:"ㄅㄧㄠˇ",m:"express"},{c:"达",p:"dá",z:"ㄉㄚˊ",m:"reach"}]},
+{w:"辩论",p:"biànlùn",z:"ㄅㄧㄢˋ ㄌㄨㄣˋ",m:"to debate; a debate",hsk:5,cats:["school","social","actions"],chars:[{c:"辩",p:"biàn",z:"ㄅㄧㄢˋ",m:"debate"},{c:"论",p:"lùn",z:"ㄌㄨㄣˋ",m:"discuss"}]},
+{w:"观点",p:"guāndiǎn",z:"ㄍㄨㄢ ㄉㄧㄢˇ",m:"viewpoint; point of view",hsk:5,cats:["grammar","school"],chars:[{c:"观",p:"guān",z:"ㄍㄨㄢ",m:"view"},{c:"点",p:"diǎn",z:"ㄉㄧㄢˇ",m:"point"}]},
+{w:"规律",p:"guīlǜ",z:"ㄍㄨㄟ ㄌㄩˋ",m:"rule; law; regularity",hsk:5,cats:["grammar","school"],chars:[{c:"规",p:"guī",z:"ㄍㄨㄟ",m:"rule"},{c:"律",p:"lǜ",z:"ㄌㄩˋ",m:"law"}]},
+{w:"矛盾",p:"máodùn",z:"ㄇㄠˊ ㄉㄨㄣˋ",m:"contradiction; contradictory",hsk:5,cats:["grammar","social"],chars:[{c:"矛",p:"máo",z:"ㄇㄠˊ",m:"spear"},{c:"盾",p:"dùn",z:"ㄉㄨㄣˋ",m:"shield"}]},
+{w:"民族",p:"mínzú",z:"ㄇㄧㄣˊ ㄗㄨˊ",m:"ethnic group; nationality",hsk:5,cats:["social","places"],chars:[{c:"民",p:"mín",z:"ㄇㄧㄣˊ",m:"people"},{c:"族",p:"zú",z:"ㄗㄨˊ",m:"clan"}]},
+{w:"实际",p:"shíjì",z:"ㄕˊ ㄐㄧˋ",m:"practical; realistic; actual",hsk:5,cats:["grammar"],chars:[{c:"实",p:"shí",z:"ㄕˊ",m:"real"},{c:"际",p:"jì",z:"ㄐㄧˋ",m:"boundary"}]},
+{w:"提供",p:"tígōng",z:"ㄊㄧˊ ㄍㄨㄥ",m:"to provide; to supply",hsk:5,cats:["actions","work"],chars:[{c:"提",p:"tí",z:"ㄊㄧˊ",m:"carry"},{c:"供",p:"gōng",z:"ㄍㄨㄥ",m:"supply"}]},
+{w:"推广",p:"tuīguǎng",z:"ㄊㄨㄟ ㄍㄨㄤˇ",m:"to promote; to spread",hsk:5,cats:["actions","work"],chars:[{c:"推",p:"tuī",z:"ㄊㄨㄟ",m:"push"},{c:"广",p:"guǎng",z:"ㄍㄨㄤˇ",m:"wide"}]},
+{w:"消费",p:"xiāofèi",z:"ㄒㄧㄠ ㄈㄟˋ",m:"to consume; consumption",hsk:5,cats:["money","work"],chars:[{c:"消",p:"xiāo",z:"ㄒㄧㄠ",m:"consume"},{c:"费",p:"fèi",z:"ㄈㄟˋ",m:"expense"}]},
+{w:"心理",p:"xīnlǐ",z:"ㄒㄧㄣ ㄌㄧˇ",m:"psychology; mental",hsk:5,cats:["emotions","body","school"],chars:[{c:"心",p:"xīn",z:"ㄒㄧㄣ",m:"heart"},{c:"理",p:"lǐ",z:"ㄌㄧˇ",m:"reason"}]},
+{w:"幸福",p:"xìngfú",z:"ㄒㄧㄥˋ ㄈㄨˊ",m:"happiness; happy; blessed",hsk:5,cats:["emotions"],chars:[{c:"幸",p:"xìng",z:"ㄒㄧㄥˋ",m:"luck"},{c:"福",p:"fú",z:"ㄈㄨˊ",m:"blessing"}]},
+{w:"严格",p:"yángé",z:"ㄧㄢˊ ㄍㄜˊ",m:"strict; rigorous",hsk:5,cats:["grammar","school"],chars:[{c:"严",p:"yán",z:"ㄧㄢˊ",m:"strict"},{c:"格",p:"gé",z:"ㄍㄜˊ",m:"standard"}]},
+{w:"要求",p:"yāoqiú",z:"ㄧㄠ ㄑㄧㄡˊ",m:"to demand; requirement",hsk:5,cats:["actions","work","school"],chars:[{c:"要",p:"yāo",z:"ㄧㄠ",m:"demand"},{c:"求",p:"qiú",z:"ㄑㄧㄡˊ",m:"seek"}]},
+{w:"依靠",p:"yīkào",z:"ㄧ ㄎㄠˋ",m:"to rely on; to depend on",hsk:5,cats:["actions","grammar"],chars:[{c:"依",p:"yī",z:"ㄧ",m:"depend"},{c:"靠",p:"kào",z:"ㄎㄠˋ",m:"lean on"}]},
+{w:"意义",p:"yìyì",z:"ㄧˋ ㄧˋ",m:"meaning; significance",hsk:5,cats:["grammar","school"],chars:[{c:"意",p:"yì",z:"ㄧˋ",m:"meaning"},{c:"义",p:"yì",z:"ㄧˋ",m:"meaning"}]},
+{w:"争论",p:"zhēnglùn",z:"ㄓㄥ ㄌㄨㄣˋ",m:"to argue; dispute; controversy",hsk:5,cats:["social","actions"],chars:[{c:"争",p:"zhēng",z:"ㄓㄥ",m:"compete"},{c:"论",p:"lùn",z:"ㄌㄨㄣˋ",m:"discuss"}]},
+{w:"趋势",p:"qūshì",z:"ㄑㄩ ㄕˋ",m:"trend; tendency",hsk:5,cats:["work","grammar"],chars:[{c:"趋",p:"qū",z:"ㄑㄩ",m:"tend towards"},{c:"势",p:"shì",z:"ㄕˋ",m:"tendency"}]},
+{w:"理解",p:"lǐjiě",z:"ㄌㄧˇ ㄐㄧㄝˇ",m:"to understand; to comprehend",hsk:5,cats:["actions","school","grammar"],chars:[{c:"理",p:"lǐ",z:"ㄌㄧˇ",m:"reason"},{c:"解",p:"jiě",z:"ㄐㄧㄝˇ",m:"understand"}]},
+{w:"确认",p:"quèrèn",z:"ㄑㄩㄝˋ ㄖㄣˋ",m:"to confirm; to verify",hsk:5,cats:["actions","work"],chars:[{c:"确",p:"què",z:"ㄑㄩㄝˋ",m:"definite"},{c:"认",p:"rèn",z:"ㄖㄣˋ",m:"recognize"}]},
+{w:"负担",p:"fùdān",z:"ㄈㄨˋ ㄉㄢ",m:"burden; to bear a burden",hsk:5,cats:["emotions","work"],chars:[{c:"负",p:"fù",z:"ㄈㄨˋ",m:"carry"},{c:"担",p:"dān",z:"ㄉㄢ",m:"bear"}]},
+{w:"积极",p:"jījí",z:"ㄐㄧ ㄐㄧˊ",m:"positive; active; enthusiastic",hsk:5,cats:["emotions","grammar"],chars:[{c:"积",p:"jī",z:"ㄐㄧ",m:"accumulate"},{c:"极",p:"jí",z:"ㄐㄧˊ",m:"extreme"}]},
+{w:"抱怨",p:"bàoyuàn",z:"ㄅㄠˋ ㄩㄢˋ",m:"to complain; to grumble",hsk:5,cats:["emotions","social"],chars:[{c:"抱",p:"bào",z:"ㄅㄠˋ",m:"hold"},{c:"怨",p:"yuàn",z:"ㄩㄢˋ",m:"resentment"}]},
+{w:"风格",p:"fēnggé",z:"ㄈㄥ ㄍㄜˊ",m:"style; manner",hsk:5,cats:["grammar"],chars:[{c:"风",p:"fēng",z:"ㄈㄥ",m:"wind"},{c:"格",p:"gé",z:"ㄍㄜˊ",m:"style"}]},
+{w:"根本",p:"gēnběn",z:"ㄍㄣ ㄅㄣˇ",m:"fundamental; at all; root",hsk:5,cats:["grammar"],chars:[{c:"根",p:"gēn",z:"ㄍㄣ",m:"root"},{c:"本",p:"běn",z:"ㄅㄣˇ",m:"root"}]},
+{w:"合理",p:"hélǐ",z:"ㄏㄜˊ ㄌㄧˇ",m:"reasonable; rational",hsk:5,cats:["grammar"],chars:[{c:"合",p:"hé",z:"ㄏㄜˊ",m:"fit"},{c:"理",p:"lǐ",z:"ㄌㄧˇ",m:"reason"}]},
+{w:"及时",p:"jíshí",z:"ㄐㄧˊ ㄕˊ",m:"timely; in time; promptly",hsk:5,cats:["time","grammar"],chars:[{c:"及",p:"jí",z:"ㄐㄧˊ",m:"reach"},{c:"时",p:"shí",z:"ㄕˊ",m:"time"}]},
+{w:"坚强",p:"jiānqiáng",z:"ㄐㄧㄢ ㄑㄧㄤˊ",m:"strong; firm; unyielding",hsk:5,cats:["emotions","grammar"],chars:[{c:"坚",p:"jiān",z:"ㄐㄧㄢ",m:"firm"},{c:"强",p:"qiáng",z:"ㄑㄧㄤˊ",m:"strong"}]},
+{w:"经验",p:"jīngyàn",z:"ㄐㄧㄥ ㄧㄢˋ",m:"experience",hsk:5,cats:["work","grammar"],chars:[{c:"经",p:"jīng",z:"ㄐㄧㄥ",m:"pass"},{c:"验",p:"yàn",z:"ㄧㄢˋ",m:"verify"}]},
+{w:"开心",p:"kāixīn",z:"ㄎㄞ ㄒㄧㄣ",m:"happy; joyful",hsk:5,cats:["emotions"],chars:[{c:"开",p:"kāi",z:"ㄎㄞ",m:"open"},{c:"心",p:"xīn",z:"ㄒㄧㄣ",m:"heart"}]},
+{w:"冷静",p:"lěngjìng",z:"ㄌㄥˇ ㄐㄧㄥˋ",m:"calm; cool-headed",hsk:5,cats:["emotions"],chars:[{c:"冷",p:"lěng",z:"ㄌㄥˇ",m:"cold"},{c:"静",p:"jìng",z:"ㄐㄧㄥˋ",m:"quiet"}]},
+{w:"目的",p:"mùdì",z:"ㄇㄨˋ ㄉㄧˋ",m:"purpose; goal; objective",hsk:5,cats:["grammar"],chars:[{c:"目",p:"mù",z:"ㄇㄨˋ",m:"eye"},{c:"的",p:"dì",z:"ㄉㄧˋ",m:"target"}]},
+{w:"培养",p:"péiyǎng",z:"ㄆㄟˊ ㄧㄤˇ",m:"to cultivate; to train; to foster",hsk:5,cats:["actions","school"],chars:[{c:"培",p:"péi",z:"ㄆㄟˊ",m:"cultivate"},{c:"养",p:"yǎng",z:"ㄧㄤˇ",m:"raise"}]},
+{w:"批准",p:"pīzhǔn",z:"ㄆㄧ ㄓㄨㄣˇ",m:"to approve; to sanction",hsk:5,cats:["actions","work"],chars:[{c:"批",p:"pī",z:"ㄆㄧ",m:"approve"},{c:"准",p:"zhǔn",z:"ㄓㄨㄣˇ",m:"allow"}]},
+{w:"勤奋",p:"qínfèn",z:"ㄑㄧㄣˊ ㄈㄣˋ",m:"hardworking; diligent",hsk:5,cats:["emotions","school"],chars:[{c:"勤",p:"qín",z:"ㄑㄧㄣˊ",m:"diligent"},{c:"奋",p:"fèn",z:"ㄈㄣˋ",m:"strive"}]},
+{w:"热情",p:"rèqíng",z:"ㄖㄜˋ ㄑㄧㄥˊ",m:"enthusiasm; warm; passionate",hsk:5,cats:["emotions","social"],chars:[{c:"热",p:"rè",z:"ㄖㄜˋ",m:"hot"},{c:"情",p:"qíng",z:"ㄑㄧㄥˊ",m:"feeling"}]},
+{w:"深刻",p:"shēnkè",z:"ㄕㄣ ㄎㄜˋ",m:"profound; deep; impressive",hsk:5,cats:["grammar"],chars:[{c:"深",p:"shēn",z:"ㄕㄣ",m:"deep"},{c:"刻",p:"kè",z:"ㄎㄜˋ",m:"engrave"}]},
+{w:"思想",p:"sīxiǎng",z:"ㄙ ㄒㄧㄤˇ",m:"thought; idea; thinking",hsk:5,cats:["grammar","school"],chars:[{c:"思",p:"sī",z:"ㄙ",m:"think"},{c:"想",p:"xiǎng",z:"ㄒㄧㄤˇ",m:"think"}]},
+{w:"谈判",p:"tánpàn",z:"ㄊㄢˊ ㄆㄢˋ",m:"negotiation; to negotiate",hsk:5,cats:["work","social"],chars:[{c:"谈",p:"tán",z:"ㄊㄢˊ",m:"talk"},{c:"判",p:"pàn",z:"ㄆㄢˋ",m:"judge"}]},
+{w:"听说",p:"tīngshuō",z:"ㄊㄧㄥ ㄕㄨㄛ",m:"I heard that; it is said",hsk:5,cats:["social","grammar"],chars:[{c:"听",p:"tīng",z:"ㄊㄧㄥ",m:"listen"},{c:"说",p:"shuō",z:"ㄕㄨㄛ",m:"say"}]},
+{w:"危险",p:"wēixiǎn",z:"ㄨㄟ ㄒㄧㄢˇ",m:"dangerous; danger",hsk:5,cats:["grammar"],chars:[{c:"危",p:"wēi",z:"ㄨㄟ",m:"danger"},{c:"险",p:"xiǎn",z:"ㄒㄧㄢˇ",m:"risk"}]},
+{w:"相信",p:"xiāngxìn",z:"ㄒㄧㄤ ㄒㄧㄣˋ",m:"to believe; to trust",hsk:5,cats:["emotions","grammar"],chars:[{c:"相",p:"xiāng",z:"ㄒㄧㄤ",m:"mutually"},{c:"信",p:"xìn",z:"ㄒㄧㄣˋ",m:"believe"}]},
+{w:"效果",p:"xiàoguǒ",z:"ㄒㄧㄠˋ ㄍㄨㄛˇ",m:"effect; result; effectiveness",hsk:5,cats:["grammar","work"],chars:[{c:"效",p:"xiào",z:"ㄒㄧㄠˋ",m:"effect"},{c:"果",p:"guǒ",z:"ㄍㄨㄛˇ",m:"result"}]},
+{w:"血",p:"xuè",z:"ㄒㄩㄝˋ",m:"blood",hsk:5,cats:["body"],chars:[{c:"血",p:"xuè",z:"ㄒㄩㄝˋ",m:"blood"}]},
+{w:"优秀",p:"yōuxiù",z:"ㄧㄡ ㄒㄧㄡˋ",m:"excellent; outstanding",hsk:5,cats:["school","emotions"],chars:[{c:"优",p:"yōu",z:"ㄧㄡ",m:"superior"},{c:"秀",p:"xiù",z:"ㄒㄧㄡˋ",m:"fine"}]},
+{w:"原来",p:"yuánlái",z:"ㄩㄢˊ ㄌㄞˊ",m:"originally; as it turns out",hsk:5,cats:["grammar"],chars:[{c:"原",p:"yuán",z:"ㄩㄢˊ",m:"original"},{c:"来",p:"lái",z:"ㄌㄞˊ",m:"come"}]},
+{w:"愿意",p:"yuànyì",z:"ㄩㄢˋ ㄧˋ",m:"willing; to be willing",hsk:5,cats:["emotions","grammar"],chars:[{c:"愿",p:"yuàn",z:"ㄩㄢˋ",m:"willing"},{c:"意",p:"yì",z:"ㄧˋ",m:"intention"}]},
+{w:"主要",p:"zhǔyào",z:"ㄓㄨˇ ㄧㄠˋ",m:"main; major; principal",hsk:5,cats:["grammar"],chars:[{c:"主",p:"zhǔ",z:"ㄓㄨˇ",m:"main"},{c:"要",p:"yào",z:"ㄧㄠˋ",m:"important"}]},
+{w:"总结",p:"zǒngjié",z:"ㄗㄨㄥˇ ㄐㄧㄝˊ",m:"summary; to summarize",hsk:5,cats:["school","work"],chars:[{c:"总",p:"zǒng",z:"ㄗㄨㄥˇ",m:"total"},{c:"结",p:"jié",z:"ㄐㄧㄝˊ",m:"conclude"}]},
+];
+
+// ── Tone utilities ──────────────────────────────────────────────────────────
+const TMAP={'ā':1,'á':2,'ǎ':3,'à':4,'ē':1,'é':2,'ě':3,'è':4,'ī':1,'í':2,'ǐ':3,'ì':4,'ō':1,'ó':2,'ǒ':3,'ò':4,'ū':1,'ú':2,'ǔ':3,'ù':4,'ǖ':1,'ǘ':2,'ǚ':3,'ǜ':4};
+function sylTone(s){for(const c of s)if(TMAP[c])return TMAP[c];return 5;}
+function splitPinyin(p){
+  // Split fused pinyin like 'fēijī' into ['fēi','jī'] by cutting after each toned syllable
+  const parts=p.trim().split(/\s+/);
+  if(parts.length>1)return parts;
+  const s=p.trim();
+  const vowels='aeiouü';
+  const syls=[];let i=0;
+  while(i<s.length){
+    // find next toned vowel
+    let tv=-1;
+    for(let j=i;j<s.length;j++){if(TMAP[s[j].toLowerCase()]||TMAP[s[j]]){tv=j;break;}}
+    if(tv===-1){syls.push(s.slice(i));break;}
+    // consume coda: vowels, n (unless followed by vowel), g, r
+    let end=tv+1;
+    while(end<s.length){
+      const c=s[end].toLowerCase();
+      if(c==='n'){
+        if(end+1<s.length&&vowels.includes(s[end+1].toLowerCase()))break;
+        end++;
+      }else if(c==='g'||c==='r'){end++;if(c==='r')break;}
+      else if(vowels.includes(c)){end++;}
+      else{break;}
+    }
+    syls.push(s.slice(i,end));i=end;
+  }
+  return syls.filter(x=>x);
+}
+function getTones(p){return splitPinyin(p).map(sylTone);}
+function matchTone(p,f){
+  if(f==='all')return true;
+  const t=getTones(p);
+  if(f.length===1)return t.some(x=>x===+f);
+  if(t.length<2)return false;
+  return t[0]===+f[0]&&t[1]===+f[1];
+}
+
+// ── State ───────────────────────────────────────────────────────────────────
+let deck=[],idx=0,face='front',loopN=0;
+let apActive=false,apTimer=null,apLoopN=0;
+let voices=[],selVoice=null;
+
+// ── Filters ─────────────────────────────────────────────────────────────────
+function applyFilters(){
+  const hsk=(document.querySelector('#hskChips .chip.on')||{}).dataset||{hsk:'all'};
+  const cat=document.getElementById('catFilter').value;
+  const tone=document.getElementById('toneFilter').value;
+  deck=ALL_WORDS.filter(w=>{
+    if(hsk.hsk!=='all'&&w.hsk!==+hsk.hsk)return false;
+    if(cat!=='all'&&!w.cats.includes(cat))return false;
+    if(tone!=='all'&&!matchTone(w.p,tone))return false;
+    return true;
+  });
+  idx=0;face='front';loopN=0;
+  stopAP();
+  render();
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function render(){
+  const area=document.getElementById('cardArea');
+  const nav=document.getElementById('navrow');
+  const statsEl=document.getElementById('statsEl');
+  const pinfo=document.getElementById('pinfo');
+  const prog=document.getElementById('progEl');
+  if(statsEl)statsEl.textContent=deck.length+' card'+(deck.length!==1?'s':'');
+
+  if(deck.length===0){
+    area.innerHTML='<div class="nocard"><h3>No cards found</h3><p>Try adjusting your filters.</p></div>';
+    if(nav)nav.style.display='none';
+    document.getElementById('ldotsRow').style.display='none';
+    if(pinfo)pinfo.innerHTML='No cards';
+    return;
+  }
+
+  if(pinfo)pinfo.innerHTML='Card <strong>'+(idx+1)+'</strong> of <strong>'+deck.length+'</strong>';
+  if(prog)prog.textContent=(idx+1)+' / '+deck.length;
+
+  const w=deck[idx];
+  const wl=Math.max(1,+document.getElementById('wordLoops').value||1);
+
+  // Loop dots
+  const ldRow=document.getElementById('ldotsRow');
+  const ldots=document.getElementById('ldots');
+  if(wl>1){
+    ldRow.style.display='flex';
+    let h='';
+    for(let i=0;i<Math.min(wl,14);i++){
+      h+='<div class="ld'+(i<loopN?' done':i===loopN?' cur':'')+'"></div>';
+    }
+    ldots.innerHTML=h;
+  }else{ldRow.style.display='none';}
+
+  // Card HTML
+  const cats=w.cats.slice(0,2).join(', ');
+  let charHtml='';
+  if(w.chars&&w.chars.length>1){
+    charHtml='<div class="chars-lbl">Character breakdown</div><div class="chars-grid">';
+    w.chars.forEach(c=>{
+      charHtml+='<div class="ctile"><span class="cc">'+c.c+'</span><span class="cp">'+c.p+'</span><span class="cz">'+c.z+'</span><p class="cm">'+c.m+'</p></div>';
+    });
+    charHtml+='</div>';
+  }
+
+  if(face==='front'){
+    area.innerHTML=
+      '<div class="card-outer"><div class="card" id="theCard">'+
+      '<div class="card-badge-row"><span class="hbadge">HSK '+w.hsk+'</span><span class="cbadge">'+cats+'</span></div>'+
+      '<button class="abtn" id="abtn">♪</button>'+
+      '<div class="front-body">'+
+        '<div class="ch">'+w.w+'</div>'+
+        '<div class="py">'+w.p+'</div>'+
+        '<div class="zy">'+w.z+'</div>'+
+      '</div>'+
+      '<div class="flip-hint">tap to flip →</div>'+
+      '</div></div>';
+  }else{
+    area.innerHTML=
+      '<div class="card-outer"><div class="card" id="theCard">'+
+      '<div class="card-badge-row"><span class="hbadge">HSK '+w.hsk+'</span><span class="cbadge">'+cats+'</span></div>'+
+      '<button class="abtn" id="abtn">♪</button>'+
+      '<div class="back-top">'+
+        '<div class="meaning">'+w.m+'</div>'+
+        '<div class="back-py">'+w.p+'</div>'+
+        '<div class="back-zy">'+w.z+'</div>'+
+      '</div>'+
+      charHtml+
+      '<div class="face-label">← tap to flip back</div>'+
+      '</div></div>';
+  }
+
+  document.getElementById('theCard').addEventListener('click',e=>{
+    if(e.target.closest('.abtn'))return;
+    flipCard();
+  });
+  document.getElementById('abtn').addEventListener('click',e=>{
+    e.stopPropagation();
+    // iOS requires speech inside user gesture handler — this click IS a gesture
+    if(speechSynthesis.paused){try{speechSynthesis.resume();}catch(e){}}
+    speak(w.w);
+  });
+
+  if(nav)nav.style.display='flex';
+  document.getElementById('prevBtn').disabled=idx===0;
+  document.getElementById('nextBtn').disabled=idx===deck.length-1;
+}
+
+function flipCard(){
+  face=face==='front'?'back':'front';
+  render();
+}
+
+// ── Navigation ───────────────────────────────────────────────────────────────
+function goNext(){
+  if(idx<deck.length-1){idx++;face='front';loopN=0;render();}
+}
+function goPrev(){
+  if(idx>0){idx--;face='front';loopN=0;render();}
+}
+function shuffleDeck(){
+  for(let i=deck.length-1;i>0;i--){const j=0|Math.random()*(i+1);[deck[i],deck[j]]=[deck[j],deck[i]];}
+  idx=0;face='front';loopN=0;render();
+}
+
+// ── Speech ───────────────────────────────────────────────────────────────────
+
+// ═══════════════════════════════════════════════════════════
+// VOICE LOADING — robust for iOS/iPad/Edge
+// ═══════════════════════════════════════════════════════════
+let _voiceRetries = 0;
+
+function loadVoices() {
+  const all = speechSynthesis.getVoices();
+  if (!all.length) return; // not ready yet
+
+  const PREF = ['ting-ting','meijia','sin-ji','ya-ling','li-mu','hanhan','minglong'];
+  let candidates = all.filter(v => {
+    const l = v.lang.toLowerCase(), n = v.name.toLowerCase();
+    if (l.startsWith('zh')) return true;
+    if (PREF.some(x => n.includes(x))) return true;
+    return false;
+  });
+  function score(v) {
+    const n = v.name.toLowerCase(), l = v.lang.toLowerCase(); let s = 0;
+    if (PREF.some(x => n.includes(x))) s += 20;
+    if (l === 'zh-tw' || l === 'zh-cn') s += 5;
+    if (l === 'zh-hk') s += 2;
+    if (n.includes('cantonese') || n.includes('yue')) s -= 10;
+    return s;
+  }
+  candidates.sort((a,b) => score(b) - score(a));
+  voices = candidates.length ? candidates : all;
+
+  const sel = document.getElementById('voiceSelect');
+  const prevVal = sel.value;
+  sel.innerHTML = '';
+  if (!voices.length) {
+    sel.innerHTML = '<option>No voices found — check OS TTS settings</option>';
+    return;
+  }
+  voices.forEach((v,i) => {
+    const o = document.createElement('option');
+    o.value = i;
+    o.textContent = v.name.slice(0,36) + ' [' + v.lang + ']';
+    sel.appendChild(o);
+  });
+  if (prevVal && sel.querySelector('option[value="'+prevVal+'"]')) sel.value = prevVal;
+  selVoice = voices[+sel.value] || voices[0];
+  sel.onchange = () => { selVoice = voices[+sel.value]; };
+  const dbg = document.getElementById('voiceDebug');
+  if (dbg && dbg.style.display !== 'none') renderVoiceDebug(all);
+}
+
+function renderVoiceDebug(allVoices) {
+  const dbg = document.getElementById('voiceDebug');
+  if (!dbg || dbg.style.display === 'none') return;
+  const list = allVoices || speechSynthesis.getVoices();
+  let h = '<div style="font-size:9px;line-height:1.8;color:var(--muted)">';
+  h += '<b style="color:var(--ink)">All ' + list.length + ' voices your browser has:</b><br>';
+  list.forEach((v,i) => {
+    const zh = v.lang.toLowerCase().startsWith('zh');
+    h += '<span style="color:' + (zh ? 'var(--accent2)' : 'var(--muted)') + '">' +
+         i + '. ' + v.name + ' [' + v.lang + ']' + (v.default ? ' ★' : '') + '</span><br>';
+  });
+  h += '</div>';
+  dbg.innerHTML = h;
+}
+
+function retryLoadVoices() {
+  loadVoices();
+  _voiceRetries++;
+  if (voices.length === 0 && _voiceRetries < 20) {
+    setTimeout(retryLoadVoices, _voiceRetries < 5 ? 200 : 500);
+  }
+}
+if (typeof speechSynthesis !== 'undefined') {
+  speechSynthesis.onvoiceschanged = loadVoices;
+  setTimeout(retryLoadVoices, 100);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SPEAK ENGINE — designed for iOS/iPad reliability
+//
+// Key iOS/Edge fixes:
+// 1. Resume the synthesis engine before every speak (iOS suspends it)
+// 2. Fallback timeout so onend-never-fires can't stall the loop
+// 3. Debounce: ignore rapid duplicate calls
+// 4. Cancel + 50ms settle gap before new utterance (iOS needs this)
+// 5. Single completion callback — never double-fires
+// ═══════════════════════════════════════════════════════════
+let _speakTimer    = null;   // safety timeout handle
+let _speakDone     = null;   // current completion callback
+let _speakBusy     = false;  // guard against re-entry
+let _cancelSettle  = null;   // post-cancel settle timer
+
+function speak(txt, onDone) {
+  if (!txt || typeof speechSynthesis === 'undefined') {
+    if (onDone) onDone();
+    return;
+  }
+  if (!voices.length) loadVoices();
+
+  // Cancel any in-flight utterance cleanly
+  clearTimeout(_speakTimer);
+  clearTimeout(_cancelSettle);
+  _speakDone = null;
+  _speakBusy = false;
+  speechSynthesis.cancel();
+
+  // iOS/Edge: must wait ~50ms after cancel before speaking again
+  _cancelSettle = setTimeout(() => {
+    _doSpeak(txt, onDone);
+  }, 60);
+}
+
+function _doSpeak(txt, onDone) {
+  // iOS WebKit often pauses synthesis — kick it awake
+  if (speechSynthesis.paused) {
+    try { speechSynthesis.resume(); } catch(e){}
+  }
+
+  const u = new SpeechSynthesisUtterance(txt);
+  u.lang  = selVoice ? selVoice.lang : 'zh-CN';
+  u.rate  = parseFloat(document.getElementById('speechRate').value) || 0.8;
+  if (selVoice) u.voice = selVoice;
+
+  // Estimate duration for safety timeout:
+  // Chinese chars ~0.5s each at rate 0.8, minimum 2s, max 8s
+  const charCount   = txt.length;
+  const estDuration = Math.min(8000, Math.max(2000, charCount * 600 / u.rate));
+
+  _speakBusy = true;
+  let _fired = false;
+
+  function finish() {
+    if (_fired) return; // prevent double-fire
+    _fired = true;
+    _speakBusy = false;
+    clearTimeout(_speakTimer);
+    // Update audio button state
+    const btn = document.getElementById('abtn');
+    if (btn) btn.classList.remove('on');
+    if (onDone) onDone();
+  }
+
+  u.onend   = finish;
+  u.onerror = (e) => {
+    // 'interrupted' is normal on iOS when we cancel — ignore it
+    if (e.error !== 'interrupted') finish();
+    else { _fired = false; } // allow retry path
+  };
+
+  // Safety timeout — if onend never fires (common on iOS/Edge),
+  // we advance anyway so the loop doesn't stall
+  _speakTimer = setTimeout(() => {
+    if (!_fired) {
+      console.warn('[speak] onend timeout — forcing completion');
+      finish();
+    }
+  }, estDuration + 1500);
+
+  // Update audio button
+  const btn = document.getElementById('abtn');
+  if (btn) btn.classList.add('on');
+
+  try {
+    speechSynthesis.speak(u);
+  } catch(e) {
+    finish();
+  }
+
+  // iOS Chrome bug: synthesis stalls silently — detect and recover
+  setTimeout(() => {
+    if (!_fired && speechSynthesis.paused) {
+      try { speechSynthesis.resume(); } catch(e){}
+    }
+  }, 300);
+}
+
+// ═══════════════════════════════════════════════════════════
+// AUTOPLAY — sequential queue, no timer/onend race
+// Each step: speak → wait for completion → delay → next step
+// ═══════════════════════════════════════════════════════════
+function startAP() {
+  if (apActive || deck.length === 0) return;
+  apActive = true; apLoopN = 0;
+  document.getElementById('apStart').classList.add('on');
+  document.getElementById('apSt').textContent = 'Playing…';
+  // iOS: user gesture required for first speech — we're inside a click handler, so this is fine
+  _runAPStep();
+}
+
+function _runAPStep() {
+  if (!apActive) return;
+
+  const lc = Math.max(1, parseInt(document.getElementById('wordLoops').value) || 1);
+  const nd = parseFloat(document.getElementById('nextDelay').value) || 0;
+  const w  = deck[idx];
+
+  // Update loop dots
+  loopN = apLoopN;
+  render();
+
+  // Speak the word, then on completion decide what's next
+  speak(w.w, () => {
+    if (!apActive) return;
+
+    apLoopN++;
+
+    if (apLoopN < lc) {
+      // Still looping this word — brief pause then repeat
+      apTimer = setTimeout(() => {
+        if (apActive) _runAPStep();
+      }, 400);
+    } else {
+      // Done with this word — move to next after nextDelay
+      apLoopN = 0; loopN = 0;
+      if (nd === 0) {
+        // Manual advance mode — stop autoplay, user navigates
+        apActive = false;
+        document.getElementById('apStart').classList.remove('on');
+        document.getElementById('apSt').textContent = 'Paused — tap Next';
+        render();
+      } else {
+        apTimer = setTimeout(() => {
+          if (!apActive) return;
+          if (idx < deck.length - 1) {
+            idx++;
+            _runAPStep();
+          } else {
+            apActive = false;
+            document.getElementById('apStart').classList.remove('on');
+            document.getElementById('apSt').textContent = 'Done ✓';
+            render();
+          }
+        }, nd * 1000);
+      }
+    }
+  });
+}
+
+function stopAP() {
+  apActive = false;
+  clearTimeout(apTimer);
+  clearTimeout(_speakTimer);
+  clearTimeout(_cancelSettle);
+  if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
+  _speakBusy = false; _speakDone = null;
+  const b = document.getElementById('apStart'); if (b) b.classList.remove('on');
+  const s = document.getElementById('apSt');   if (s) s.textContent = 'Off';
+  const btn = document.getElementById('abtn'); if (btn) btn.classList.remove('on');
+}
+
+function resetAP() {
+  stopAP(); idx = 0; loopN = 0; apLoopN = 0; render();
+  const s = document.getElementById('apSt'); if (s) s.textContent = 'Ready';
+}
+
+document.getElementById('speechRate').addEventListener('input', function() {
+  document.getElementById('rateVal').textContent = parseFloat(this.value).toFixed(2) + '×';
+});
+
+document.getElementById('voiceDebugBtn').addEventListener('click',()=>{
+  const dbg=document.getElementById('voiceDebug');
+  const btn=document.getElementById('voiceDebugBtn');
+  if(dbg.style.display==='none'){
+    dbg.style.display='block';
+    btn.textContent='✕ Hide voices';
+    renderVoiceDebug(speechSynthesis.getVoices());
+  }else{
+    dbg.style.display='none';
+    btn.textContent='🔍 Show all voices';
+  }
+});
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  document.querySelectorAll('#hskChips .chip').forEach(c=>c.classList.remove('on'));
+  document.querySelector('#hskChips .chip[data-hsk="all"]').classList.add('on');
+  document.getElementById('catFilter').value='all';
+  document.getElementById('toneFilter').value='all';
+  applyFilters();
+});
+document.addEventListener('keydown',e=>{
+  if(['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;
+  if(e.key===' '||e.key==='Enter'){e.preventDefault();flipCard();}
+  if(e.key==='ArrowRight'){stopAP();goNext();}
+  if(e.key==='ArrowLeft'){stopAP();goPrev();}
+  if(e.key==='p'||e.key==='P'){if(deck[idx])speak(deck[idx].w);}
+});
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+
+// iOS/iPadOS detection
+function isIOS() {
+  return /iP(ad|hone|od)/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+// Unlock Web Speech API on iOS — must happen inside a user gesture
+let _audioUnlocked = false;
+
+function unlockAudio() {
+  if (_audioUnlocked) return;
+  _audioUnlocked = true;
+  // Trigger a silent utterance inside a user gesture — this unlocks Web Speech on iOS
+  if (typeof speechSynthesis !== 'undefined') {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0; u.rate = 2;
+    if (selVoice) u.voice = selVoice;
+    try { speechSynthesis.speak(u); } catch(e){}
+  }
+  // Hide the audio unlock strip, keep install tip visible
+  const strip = document.getElementById('audioUnlockStrip');
+  if (strip) strip.style.display = 'none';
+}
+
+if (isIOS()) {
+  const banner = document.getElementById('iosBanner');
+  if (banner) {
+    banner.style.display = 'block';
+    // Auto-unlock on first touch anywhere on the page
+    document.body.addEventListener('touchstart', function _u() {
+      document.body.removeEventListener('touchstart', _u);
+      unlockAudio();
+    }, { once: true, passive: true });
+  }
+}
+
+// Keep speechSynthesis alive on iOS — it auto-suspends after ~30s idle
+setInterval(() => {
+  if (typeof speechSynthesis === 'undefined') return;
+  if (speechSynthesis.paused) { try { speechSynthesis.resume(); } catch(e){} }
+}, 8000);
+
+applyFilters();
+
+
+
+
+</script>
+</body>
+</html>
